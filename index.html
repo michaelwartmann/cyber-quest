@@ -153,6 +153,12 @@ ul.ticks li.now span{font-weight:700}
 ul.ticks li.own span::before{content:"★ ";color:var(--a)}
 .btn.x{min-width:44px;padding:.2rem .5rem}
 .addown .row input{flex:1 1 12rem;width:auto}
+.finale{position:fixed;inset:0;z-index:50;background:rgba(10,18,16,.92);display:flex;align-items:center;justify-content:center;padding:1rem}
+.finale .box{background:var(--card);color:var(--ink);border-radius:1rem;max-width:44rem;width:100%;max-height:100%;overflow:auto;padding:1rem;text-align:center;border:3px solid var(--g)}
+.finale video{width:100%;border-radius:.7rem;background:#1b2a2b;aspect-ratio:16/9}
+.finale h2{font-size:1.6rem;margin:.6rem 0 .3rem;color:var(--g)}
+.wonbar{background:var(--g-bg);border:3px solid var(--g);border-radius:.9rem;padding:.8rem 1rem;margin:.8rem 0;text-align:center}
+.wonbar b{display:block;font-size:1.25rem;color:var(--g)}
 input[type=date]{min-height:44px;font:inherit;border:1px solid var(--line);border-radius:.5rem;padding:.3rem .5rem;background:var(--bg);color:var(--ink)}
 </style>
 </head>
@@ -682,7 +688,12 @@ Object.assign(T, {
   blkQ: L("What's blocking it?", "Was blockiert?"), blkNote: L("Blocker or next step, in your words", "Blocker oder nächster Schritt, in deinen Worten"),
   blkNotePh: L("e.g. at the next visit to my parents", "z. B. beim nächsten Besuch bei meinen Eltern"),
   blkDate: L("Planned for (optional)", "Geplant für (optional)"), save: L("Save", "Speichern"), cancel: L("Cancel", "Abbrechen"),
-  bucketsNav: L("Your doors by status", "Deine Türen nach Stand")
+  bucketsNav: L("Your doors by status", "Deine Türen nach Stand"),
+  winH: L("Quest complete! Every door is closed.", "Quest geschafft! Jede Tür ist zu."),
+  winTxt: L("Ying folds one last paper crane, leaves it on your doorstep and bows. Philia puts the kettle on. Your digital home is harder to break into than almost every house on the street.",
+            "Ying faltet einen letzten Papierkranich, legt ihn auf deine Türschwelle und verbeugt sich. Philia setzt Tee auf. Dein digitales Zuhause ist schwerer zu knacken als fast jedes Haus in der Straße."),
+  winKeep: L("Keep it that way: check again in a few months, and when something new comes into the house.", "Damit es so bleibt: in ein paar Monaten wieder prüfen, und wenn etwas Neues ins Haus kommt."),
+  winWatch: L("▶ Watch the finale again", "▶ Finale nochmal ansehen"), close: L("Close", "Schließen")
 });
 const BKS = ["doing", "todo", "block", "check", "done"];
 const BADGE = { done: "✓", doing: "→", block: "‖", check: "?", todo: "○" };
@@ -761,6 +772,24 @@ function finish(id) {
   const x = plan(st.ans).find(q => q.id === id);
   if (x) { const tk = st.tick[id] = st.tick[id] || {}; x.steps.forEach((_, k) => tk[k] = true); (st.extra[id] || []).forEach(e => e.d = true); }
   st.done[id] = true; delete st.block[id]; flash = { [id]: "foiled" }; save();
+  const all = plan(st.ans); if (all.length && all.every(q => st.done[q.id])) setTimeout(showFinale, 400);
+}
+function showFinale() {
+  if ($("finale")) return;
+  const back = document.activeElement;
+  const d = document.createElement("div");
+  d.id = "finale"; d.className = "finale"; d.setAttribute("role", "dialog"); d.setAttribute("aria-modal", "true"); d.setAttribute("aria-labelledby", "finH");
+  d.innerHTML = `<div class="box"><video src="assets/intro.mp4" poster="assets/intro.webp" controls playsinline ${RM ? "" : "autoplay"}></video>
+    <h2 id="finH">🎉 ${esc(t(T.winH))}</h2><p>${esc(t(T.winTxt))}</p><p class="mute">${esc(t(T.winKeep))}</p>
+    <button class="btn primary" type="button" id="finClose">${esc(t(T.close))}</button></div>`;
+  document.body.appendChild(d);
+  const v = d.querySelector("video"); if (!RM) { const pr = v.play(); if (pr) pr.catch(() => { v.muted = true; v.play().catch(() => {}); }); }
+  const close = () => { v.pause(); d.remove(); document.removeEventListener("keydown", esc_); if (back && back.focus) back.focus(); };
+  const esc_ = e => { if (e.key === "Escape") close(); };
+  document.addEventListener("keydown", esc_);
+  d.addEventListener("click", e => { if (e.target === d) close(); });
+  $("finClose").addEventListener("click", close);
+  $("finClose").focus({ preventScroll: true });
 }
 
 function questCard(x) {
@@ -815,6 +844,7 @@ function renderGame(scroll = true) {
       <p><span class="rank">${esc(t(s.rank))}</span> · ${s.xp} ${esc(t(T.xp))}${s.next ? ` / ${s.next}` : ""}</p>
       <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%"></span></div>
       <p class="bigdone"><b>${s.doneN} / ${s.total}</b> ${esc(t(T.doneOf))}</p></div></section>
+  ${s.total && s.doneN === s.total ? `<div class="wonbar"><b>🎉 ${esc(t(T.winH))}</b><button class="btn ok" type="button" id="finBtn">${esc(t(T.winWatch))}</button></div>` : ""}
   <nav class="buckets noprint" aria-label="${esc(t(T.bucketsNav))}">${BKS.map(k => `<button type="button" class="bkchip bk-${k}" data-bk="${k}"${s.by[k].length ? "" : " disabled"}><b>${s.by[k].length}</b><span>${BADGE[k]} ${esc(t(BKL[k]))}</span></button>`).join("")}</nav>
   <div class="tabs noprint" role="tablist">
     <button class="btn" role="tab" type="button" data-tab="quests" aria-selected="${tab === "quests"}">${img("icon-house", "")} ${esc(t(T.tabQ).replace("🛡️ ", ""))}</button>
@@ -1095,6 +1125,7 @@ planEl.addEventListener("click", e => {
     return;
   }
   if (d.copy) { copyText($(d.copy).value, b); return; }
+  if (b.id === "finBtn") { showFinale(); return; }
   if (b.id === "chatSend") { sendChat(); return; }
   if (b.id === "forgetKey") { st.key = ""; save(); $("orKey").value = ""; return; }
   if (b.id === "editBtn") { st.editing = true; save(); form.hidden = false; intro.hidden = false; form.scrollIntoView({ block: "start" }); const f1 = form.querySelector("input"); if (f1) f1.focus({ preventScroll: true }); return; }
