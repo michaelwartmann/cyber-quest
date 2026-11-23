@@ -53,12 +53,10 @@ label.opt:has(input:checked){border-color:var(--acc);outline:1px solid var(--acc
 .chip.r{background:var(--r-bg);color:var(--r)}.chip.a{background:var(--a-bg);color:var(--a)}.chip.g{background:var(--g-bg);color:var(--g)}
 details.act{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:.8rem;margin:.6rem 0}
 details.act.r{border-left-color:var(--r)}details.act.a{border-left-color:var(--a)}details.act.g{border-left-color:var(--g)}
-details.act.done{opacity:.7}
 details.act summary{list-style:none;cursor:pointer;padding:.8rem 1rem;min-height:44px}
 details.act summary::-webkit-details-marker{display:none}
 details.act summary .tag{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 details.act.r .tag{color:var(--r)}details.act.a .tag{color:var(--a)}details.act.g .tag{color:var(--g)}
-details.act.done h3{text-decoration:line-through}
 .body{padding:0 1rem 1rem}
 .body ol{padding-left:1.3rem;margin:.4rem 0}
 .body li{margin:.35rem 0}
@@ -119,6 +117,43 @@ details.act summary{display:flex;gap:.7rem;align-items:center}
 .qicon{width:2.6rem;height:2.6rem;flex:none}
 .tabs img{width:1.3rem;height:1.3rem;vertical-align:-.25rem}
 .introvid{width:100%;border-radius:.8rem;margin-top:.5rem;background:#1b2a2b}
+:root{--b:#1f5fa8;--b-bg:#e4eefa;--p:#6a3fa6;--p-bg:#efe7f8}
+@media (prefers-color-scheme:dark){:root{--b:#8cbcf0;--b-bg:#15263a;--p:#c7a6f0;--p-bg:#2a1d3a}}
+.bigdone{font-size:1.15rem;margin:.4rem 0 0}.bigdone b{font-size:1.5rem}
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(7.2rem,1fr));gap:.4rem;margin:.6rem 0}
+.bkchip{font:inherit;text-align:left;cursor:pointer;border-radius:.7rem;padding:.45rem .6rem;border:2px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
+.bkchip b{display:block;font-size:1.5rem;line-height:1.1}.bkchip span{font-size:.85rem;font-weight:600}
+.bkchip:disabled{opacity:.45;cursor:default}
+.bkchip.bk-done{border-color:var(--g);background:var(--g-bg)}.bkchip.bk-doing{border-color:var(--b);background:var(--b-bg)}
+.bkchip.bk-block{border-color:var(--p);background:var(--p-bg)}.bkchip.bk-todo{border-color:var(--r);background:var(--r-bg)}.bkchip.bk-check{border-color:var(--a);background:var(--a-bg)}
+.bucket-h{display:flex;align-items:center;gap:.6rem;font-size:1.2rem;margin:1.8rem 0 .2rem;padding-bottom:.35rem;border-bottom:4px solid var(--line);scroll-margin-top:4.5rem}
+.bucket-h .cnt{margin-left:auto;font-size:1rem;background:var(--line);border-radius:1rem;padding:0 .6rem}
+.bh-done{border-color:var(--g)}.bh-doing{border-color:var(--b)}.bh-block{border-color:var(--p)}.bh-todo{border-color:var(--r)}.bh-check{border-color:var(--a)}
+.badge{flex:none;width:2.3rem;height:2.3rem;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.15rem;border:3px solid;background:var(--card)}
+.badge.done{background:var(--g);border-color:var(--g);color:#fff}
+.badge.doing{border-color:var(--b);color:var(--b)}.badge.block{border-color:var(--p);color:var(--p)}
+.badge.todo{border-color:var(--r);color:var(--r)}.badge.check{border-color:var(--a);color:var(--a)}
+@media (prefers-color-scheme:dark){.badge.done{color:#0d1a16}}
+details.act.st-done{background:var(--g-bg);border-color:var(--g);border-left-color:var(--g)}
+details.act.st-doing{border-left-color:var(--b)}details.act.st-block{border-left-color:var(--p);background:var(--p-bg)}
+details.act.st-todo{border-left-color:var(--r)}details.act.st-check{border-left-color:var(--a)}
+details.act .tag{color:var(--mute)!important}
+.sumtxt{flex:1;min-width:0}
+.status{display:block;font-size:.95rem;font-weight:700;margin-top:.15rem}
+.status.done{color:var(--g)}.status.doing{color:var(--b)}.status.block{color:var(--p)}.status.todo{color:var(--r)}.status.check{color:var(--a)}
+.mini{display:block;height:.5rem;background:var(--line);border-radius:1rem;overflow:hidden;margin-top:.3rem;max-width:12rem}
+.mini span{display:block;height:100%;background:var(--b)}
+.blocker{border:2px dashed var(--p);border-radius:.6rem;padding:.6rem .8rem;margin:.6rem 0;background:var(--card)}
+ul.ticks{list-style:none;padding:0;margin:.4rem 0}
+ul.ticks li{display:flex;align-items:flex-start;gap:.4rem;border-bottom:1px solid var(--line);padding:.2rem 0}
+ul.ticks label{display:flex;gap:.7rem;align-items:flex-start;min-height:44px;cursor:pointer;flex:1;padding:.3rem 0}
+ul.ticks input{width:1.5rem;height:1.5rem;flex:none;margin-top:.1rem;accent-color:var(--g)}
+ul.ticks li.on span{color:var(--mute)}
+ul.ticks li.now span{font-weight:700}
+ul.ticks li.own span::before{content:"★ ";color:var(--a)}
+.btn.x{min-width:44px;padding:.2rem .5rem}
+.addown .row input{flex:1 1 12rem;width:auto}
+input[type=date]{min-height:44px;font:inherit;border:1px solid var(--line);border-radius:.5rem;padding:.3rem .5rem;background:var(--bg);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -362,8 +397,12 @@ function plan(a) {
                   L("Save the recovery key (it's in your Microsoft account; also print it and keep it safe).", "Wiederherstellungsschlüssel sichern (liegt im Microsoft-Konto; zusätzlich ausdrucken und sicher aufbewahren).")],
           win10: [L("Search “BitLocker” or “Device encryption” in Settings and turn it on; save the recovery key on paper.", "In den Einstellungen „BitLocker“ oder „Geräteverschlüsselung“ suchen und einschalten; Wiederherstellungsschlüssel auf Papier sichern.")],
           mac:   [L("System Settings → Privacy & Security → FileVault: turn on. Note the recovery key on paper.", "Systemeinstellungen → Datenschutz & Sicherheit → FileVault: einschalten. Wiederherstellungsschlüssel auf Papier notieren.")],
-          linux: [L("Full-disk encryption (LUKS) is chosen at installation. If you don't have it: encrypt at the next reinstall, and encrypt your backup drives now.", "Vollverschlüsselung (LUKS) wählt man bei der Installation. Falls nicht vorhanden: bei der nächsten Neuinstallation aktivieren, Backup-Platten schon jetzt verschlüsseln."),
-                  L("Check with <code>lsblk -f</code> — look for <code>crypto_LUKS</code>.", "Prüfen mit <code>lsblk -f</code> – nach <code>crypto_LUKS</code> suchen.")]
+          linux: [L("Check first: run <code>lsblk -f</code> and look for <code>crypto_LUKS</code>. If it's there, tick everything – you're done.", "Erst prüfen: <code>lsblk -f</code> ausführen und nach <code>crypto_LUKS</code> suchen. Steht es da: alles abhaken, fertig."),
+                  L("If not: on Linux this means a reinstall, not a setting. Plan it as a project with a date (use “Can't finish now” below).", "Falls nicht: Unter Linux heißt das Neuinstallation, keine Einstellung. Als Projekt mit Termin planen (unten „Geht gerade nicht“)."),
+                  L("Prepare: full backup of your home folder to an external drive, and test that the files open.", "Vorbereiten: komplettes Backup des Home-Ordners auf eine externe Platte, und testen, ob die Dateien aufgehen."),
+                  L("Dual boot with Windows? The installer's simple “encrypt” option wipes the whole disk. Work out your exact setup first (an AI can help, with the <code>lsblk -f</code> output).", "Dual-Boot mit Windows? Die einfache „Verschlüsseln“-Option des Installers löscht die ganze Platte. Erst den genauen Aufbau klären (eine KI hilft, mit der Ausgabe von <code>lsblk -f</code>)."),
+                  L("Reinstall with “LVM and encryption”; write the passphrase on paper. Then restore the backup.", "Neu installieren mit „LVM und Verschlüsselung“; Passphrase auf Papier schreiben. Dann Backup zurückspielen."),
+                  L("Encrypt the external backup drive too (Disks → format with LUKS).", "Die externe Backup-Platte auch verschlüsseln (Laufwerke → mit LUKS formatieren).")]
         }[pc]);
   }
 
@@ -375,14 +414,17 @@ function plan(a) {
      L("Master password: 5–6 random words, e.g. from dice. Write it on paper and keep it at home.", "Master-Passwort: 5–6 zufällige Wörter, z. B. ausgewürfelt. Auf Papier schreiben und zu Hause aufbewahren."),
      L("Turn on two-step login for the manager itself.", "Zwei-Faktor-Anmeldung für den Manager selbst einschalten."),
      L("Import the passwords saved in Chrome/Firefox/Safari, then delete them from the browsers so there's one place only.", "In Chrome/Firefox/Safari gespeicherte Passwörter importieren, dann dort löschen, damit es nur einen Ort gibt."),
+     L("Switch off password saving in every browser (Chrome: Settings → Autofill → Password Manager → Offer to save: off), so new passwords only go to the manager.", "In jedem Browser das Speichern von Passwörtern abschalten (Chrome: Einstellungen → Autofill → Passwortmanager → Speichern anbieten: aus), damit neue Passwörter nur im Manager landen."),
+     L("Phone: make it the autofill service (Android: Settings → search “Autofill service” or “Passwords & accounts”; iPhone: Settings → General → AutoFill & Passwords). Never grant it the Accessibility permission – that's one of Ying's favourite tricks.", "Handy: als Autofill-Dienst einstellen (Android: Einstellungen → „Autofill-Dienst“ oder „Passwörter & Konten“ suchen; iPhone: Einstellungen → Allgemein → Automatisch ausfüllen & Passwörter). Nie die Bedienungshilfen-Berechtigung geben – das ist einer von Yings Lieblingstricks."),
      L("Let it autofill. If it doesn't offer your password on a page, stop: the page may be fake.", "Automatisch ausfüllen lassen. Bietet er auf einer Seite dein Passwort nicht an: stopp, die Seite ist evtl. gefälscht.")]);
   add("reuse", a.reuse === "never" ? "g" : a.reuse === "often" ? "r" : "a", "acc", L("No password twice", "Kein Passwort doppelt"),
     L("Leaked passwords are tried on hundreds of sites automatically within hours.", "Geleakte Passwörter werden automatisch binnen Stunden auf Hunderten Seiten ausprobiert."),
-    [L("Order: email → phone carrier → bank/PayPal → Apple/Google/Microsoft → social media → shopping → the rest.", "Reihenfolge: E-Mail → Mobilfunkanbieter → Bank/PayPal → Apple/Google/Microsoft → soziale Netzwerke → Shopping → Rest."),
-     L("For each: let the manager generate a new random password and save it.", "Für jedes: vom Manager ein neues Zufallspasswort erzeugen lassen und speichern."),
-     L("The manager's “security report / password health” shows remaining reused ones.", "Der „Sicherheitsbericht / Passwortzustand“ des Managers zeigt übrige Doppelte."),
-     L("Accounts you don't need: delete them instead of fixing them.", "Konten, die du nicht brauchst: löschen statt reparieren."),
-     L("Do 5 a day. It's done in a week or two.", "5 pro Tag. In ein, zwei Wochen ist es geschafft.")]);
+    [L("Clean out first: accounts you no longer need get deleted, not fixed (account settings → delete; no button → a GDPR deletion request by email). Add each one below as your own item.", "Erst ausmisten: Konten, die du nicht mehr brauchst, werden gelöscht, nicht repariert (Kontoeinstellungen → löschen; kein Knopf → DSGVO-Löschantrag per Mail). Jedes unten als eigenen Punkt eintragen."),
+     L("Then merge duplicates in the manager: one entry per site and login.", "Dann Doppelte im Manager zusammenführen: ein Eintrag pro Seite und Login."),
+     L("Then change, leaked passwords first (haveibeenpwned.com), then accounts without 2FA. Order: email → phone carrier → bank/PayPal → Apple/Google/Microsoft → social media → shopping → the rest.", "Dann ändern, geleakte Passwörter zuerst (haveibeenpwned.com), dann Konten ohne 2FA. Reihenfolge: E-Mail → Mobilfunk → Bank/PayPal → Apple/Google/Microsoft → soziale Netzwerke → Shopping → Rest."),
+     L("For each: let the manager generate a new password. Save it only after the site confirms the change.", "Für jedes: vom Manager ein neues Passwort erzeugen lassen. Erst speichern, wenn die Seite die Änderung bestätigt."),
+     L("Three accounts per session is plenty. Stop on a win. Stuck on one (lost login, no reset email)? Add it as an own item and move on.", "Drei Konten pro Sitzung reichen. Mit einem Erfolg aufhören. Hängt eins (Login weg, keine Reset-Mail)? Als eigenen Punkt eintragen und weiter."),
+     L("Finished when the manager's security report shows no reused passwords.", "Fertig, wenn der Sicherheitsbericht des Managers keine doppelten Passwörter mehr zeigt.")]);
   add("mail", a.mail2fa === "strong" ? "g" : a.mail2fa === "sms" ? "a" : "r", "acc", L("Lock the master key: your email", "Den Generalschlüssel sichern: deine E-Mail"),
     L("Passkeys can't be phished. The UK's NCSC now recommends them wherever offered.", "Passkeys lassen sich nicht abphishen. Das britische NCSC empfiehlt sie inzwischen überall, wo angeboten."),
     [L("Log in to your email provider's security settings (Gmail: myaccount.google.com → Security; Outlook: account.microsoft.com → Security; GMX/Web.de/Proton: Settings → Security).", "In die Sicherheitseinstellungen des Anbieters gehen (Gmail: myaccount.google.com → Sicherheit; Outlook: account.microsoft.com → Sicherheit; GMX/Web.de/Proton: Einstellungen → Sicherheit)."),
@@ -423,9 +465,11 @@ function plan(a) {
   if (a.iot && a.iot !== "none")
     add("iot", a.iot === "ok" ? "g" : "a", "home", L("Smart devices into the guest network", "Smarte Geräte ins Gastnetz"),
       L("Cheap cameras and plugs are favourite targets: rarely updated, always online.", "Billige Kameras und Steckdosen sind Lieblingsziele: selten aktualisiert, immer online."),
-      [L("Make a list of everything connected (the router shows all devices).", "Alles Verbundene auflisten (der Router zeigt alle Geräte)."),
+      [L("Do this together with everyone who uses the devices; plan a date if they're not here (“Can't finish now”).", "Gemeinsam mit allen machen, die die Geräte nutzen; sind sie nicht da, einen Termin planen („Geht gerade nicht“)."),
+       L("Make a list of everything connected (the router shows all devices).", "Alles Verbundene auflisten (der Router zeigt alle Geräte)."),
        L("Update each one in its app; change default passwords; turn on 2FA in the camera's cloud account.", "Jedes in seiner App aktualisieren; Standardpasswörter ändern; 2FA im Cloud-Konto der Kamera einschalten."),
        L("Move them to the guest Wi-Fi, so they can't see your computer and phone.", "Ins Gast-WLAN verschieben, damit sie Computer und Handy nicht sehen."),
+       L("Before you delete a device's app or cloud account, check that nothing at home still depends on it.", "Bevor du die App oder das Cloud-Konto eines Geräts löschst: prüfen, dass zu Hause nichts mehr davon abhängt."),
        L("Unplug and remove what you don't use. Indoor cameras: point away or cover when home.", "Ungenutztes abstecken und entfernen. Innenkameras: wegdrehen oder abdecken, wenn du da bist.")]);
 
   /* data */
@@ -620,195 +664,148 @@ const TRICKS = [
     why: L("Police never collect money or valuables. Hang up, then call 110 yourself (in Germany) or your local police number.", "Die Polizei holt nie Geld oder Wertsachen ab. Auflegen, dann selbst 110 wählen.") }
 ];
 
-/* helpers */
+/* ---------- v2: buckets, ticks, blockers, own items ---------- */
+Object.assign(T, {
+  R: L("Urgent", "Dringend"), A: L("Important", "Wichtig"), G: L("Check", "Prüfen"),
+  doneOf: L("done", "erledigt"),
+  sDone: L("Done", "Erledigt"), sTodo: L("Not started", "Noch nicht begonnen"), sCheck: L("Your answer says fine – not checked yet", "Laut deiner Antwort in Ordnung – noch nicht geprüft"),
+  stepsDone: L("steps done", "Schritte erledigt"),
+  blockedBy: L("Blocked:", "Blockiert:"), resume: L("Continue now", "Jetzt weitermachen"), editBlk: L("Change blocker", "Blocker ändern"),
+  checkTip: L("You answered that this is already fine. Take one minute: look at the steps below on your device. If it all matches, confirm.",
+              "Du hast geantwortet, dass das schon passt. Nimm dir eine Minute: Schau die Schritte unten auf deinem Gerät nach. Stimmt alles, bestätige."),
+  verified: L("Checked – it's really done", "Geprüft – ist wirklich erledigt"),
+  tickTip: L("Tick each step when it's done. Points come per step.", "Hake jeden Schritt ab, wenn er erledigt ist. Punkte gibt es pro Schritt."),
+  addOwn: L("Add your own item (e.g. an account to fix or delete)", "Eigenen Punkt hinzufügen (z. B. ein Konto zum Reparieren oder Löschen)"),
+  addPh: L("e.g. Discord: reset password", "z. B. Discord: Passwort zurücksetzen"), add: L("Add", "Hinzufügen"), remove: L("Remove", "Entfernen"),
+  cant: L("‖ Can't finish now", "‖ Geht gerade nicht"), allDone: L("✓ All done", "✓ Alles erledigt"),
+  notDone: L("Not done yet – reopen", "Doch nicht erledigt – wieder öffnen"),
+  blkQ: L("What's blocking it?", "Was blockiert?"), blkNote: L("Blocker or next step, in your words", "Blocker oder nächster Schritt, in deinen Worten"),
+  blkNotePh: L("e.g. at the next visit to my parents", "z. B. beim nächsten Besuch bei meinen Eltern"),
+  blkDate: L("Planned for (optional)", "Geplant für (optional)"), save: L("Save", "Speichern"), cancel: L("Cancel", "Abbrechen"),
+  bucketsNav: L("Your doors by status", "Deine Türen nach Stand")
+});
+const BKS = ["doing", "todo", "block", "check", "done"];
+const BADGE = { done: "✓", doing: "→", block: "‖", check: "?", todo: "○" };
+const BKL = { doing: L("In progress", "Angefangen"), todo: L("To do", "Zu tun"), block: L("Blocked or planned", "Blockiert oder geplant"),
+  check: L("Probably fine – check", "Wohl in Ordnung – prüfen"), done: L("Done", "Erledigt") };
+const BKH = {
+  doing: L("Started, not finished. Pick up where you left off.", "Begonnen, nicht fertig. Mach dort weiter, wo du aufgehört hast."),
+  todo: L("Not started yet. Urgent ones first.", "Noch nicht begonnen. Dringende zuerst."),
+  block: L("Can't be done right now. Each card says what's blocking it and when it's planned.", "Geht gerade nicht. Jede Karte sagt, was blockiert und wann es geplant ist."),
+  check: L("Your answers say these are fine, but nobody has checked yet. One minute each.", "Laut deinen Antworten in Ordnung, aber noch nicht geprüft. Je eine Minute."),
+  done: L("Finished and confirmed. Ying can't get in here.", "Fertig und bestätigt. Hier kommt Ying nicht rein.")
+};
+const BR = {
+  people: L("Needs someone else (family, a visit)", "Braucht jemand anderen (Familie, Besuch)"),
+  big: L("Big job – needs a set date", "Großer Job – braucht einen Termin"),
+  wait: L("Waiting for something (email, code, support)", "Warte auf etwas (Mail, Code, Support)"),
+  how: L("Don't know how yet", "Weiß noch nicht, wie")
+};
+st.tick = st.tick || {}; st.block = st.block || {}; st.extra = st.extra || {};
+/* migrate v1: step index → ticks; done quests → all ticked */
+if (st.steps && Object.keys(st.steps).length) {
+  for (const id in st.steps) { const n = st.steps[id]; if (typeof n === "number" && n > 0) { const tk = st.tick[id] = st.tick[id] || {}; for (let k = 0; k < n; k++) tk[k] = true; } }
+  st.steps = {};
+}
+if (!st.v2) {
+  plan(st.ans).forEach(x => { if (st.done[x.id]) { const tk = st.tick[x.id] = st.tick[x.id] || {}; x.steps.forEach((_, k) => tk[k] = true); } });
+  st.v2 = true; save();
+}
+
 const strip = s => String(s).replace(/<[^>]+>/g, "");
-const xpFor = p => p === "r" ? 30 : 20;
+const FULL = { r: 30, a: 20, g: 10 };
+function prog(x) {
+  const tk = st.tick[x.id] || {}, ex = st.extra[x.id] || [];
+  return { d: x.steps.filter((_, k) => tk[k]).length + ex.filter(e => e.d).length, n: x.steps.length + ex.length };
+}
+function status(x) {
+  if (st.done[x.id]) return "done";
+  if (st.block[x.id]) return "block";
+  if (prog(x).d > 0) return "doing";
+  return x.p === "g" ? "check" : "todo";
+}
+function xpOf(x) {
+  if (st.done[x.id]) return FULL[x.p];
+  const p = prog(x); return Math.floor(FULL[x.p] * 0.8 * p.d / Math.max(p.n, 1));
+}
 function state() {
-  const list = plan(st.ans);
-  const todo = list.filter(x => x.p !== "g"), ok = list.filter(x => x.p === "g");
-  let xp = ok.length * 10 + todo.filter(x => st.done[x.id]).reduce((s, x) => s + xpFor(x.p), 0);
-  xp += TRICKS.filter(q => st.quiz[q.id] && st.quiz[q.id].right).length * 10;
-  const foiled = todo.filter(x => st.done[x.id]).length;
+  const list = plan(st.ans), by = { doing: [], todo: [], block: [], check: [], done: [] }, ord = { r: 0, a: 1, g: 2 };
+  list.forEach(x => by[status(x)].push(x));
+  for (const k in by) by[k].sort((a, b) => ord[a.p] - ord[b.p]);
+  by.block.sort((a, b) => (st.block[a.id].date || "9999").localeCompare(st.block[b.id].date || "9999"));
+  const xp = list.reduce((s, x) => s + xpOf(x), 0) + TRICKS.filter(q => st.quiz[q.id] && st.quiz[q.id].right).length * 10;
   const parts = {};
   for (const p in PARTS) {
     const mine = list.filter(x => PARTS[p].ids.includes(x.id));
-    parts[p] = mine.length ? mine.filter(x => x.p === "g" || st.done[x.id]).length / mine.length : 1;
+    parts[p] = mine.length ? mine.reduce((s, x) => { const g = prog(x); return s + (st.done[x.id] ? 1 : 0.8 * g.d / Math.max(g.n, 1)); }, 0) / mine.length : 1;
   }
   let rank = RANKS[0][1]; for (const [n, r] of RANKS) if (xp >= n) rank = r;
   const next = (RANKS.find(([n]) => n > xp) || [null])[0];
-  return { list, todo, ok, xp, foiled, parts, rank, next };
+  return { list, by, xp, parts, rank, next, doneN: by.done.length, total: list.length };
+}
+function fmtDate(d) {
+  try { return new Date(d + "T12:00").toLocaleDateString(st.lang === "de" ? "de-DE" : "en-GB", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return d; }
+}
+function blockText(b) { return t(BR[b.r] || BR.how) + (b.note ? " – " + b.note : "") + (b.date ? " · " + fmtDate(b.date) : ""); }
+function lineFor(x, de) {
+  const s = status(x), p = prog(x);
+  const pri = { r: de ? "dringend" : "urgent", a: de ? "wichtig" : "important", g: de ? "prüfen" : "check" }[x.p];
+  let l = s === "done" ? t(x.title) : `[${pri}] ${t(x.title)}`;
+  if (s === "doing") l += ` (${p.d}/${p.n} ${de ? "Schritte" : "steps"})`;
+  if (s === "block") l += ` – ${de ? "blockiert" : "blocked"}: ${blockText(st.block[x.id])}`;
+  const own = (st.extra[x.id] || []).filter(e => !e.d).map(e => e.t);
+  if (s !== "done" && own.length) l += `\n    ${de ? "offene eigene Punkte" : "open own items"}: ${own.join("; ")}`;
+  return l;
+}
+function finish(id) {
+  const x = plan(st.ans).find(q => q.id === id);
+  if (x) { const tk = st.tick[id] = st.tick[id] || {}; x.steps.forEach((_, k) => tk[k] = true); (st.extra[id] || []).forEach(e => e.d = true); }
+  st.done[id] = true; delete st.block[id]; flash = { [id]: "foiled" }; save();
 }
 
-function botSVG(parts) {
-  const o = p => (0.12 + 0.88 * parts[p]).toFixed(2);
-  const dash = p => parts[p] < 1 ? 'stroke-dasharray="4 3"' : "";
-  return `<svg viewBox="0 0 200 230" role="img" aria-label="${esc(st.bot)}">
-  <g class="part" opacity="${o("pack")}" ${dash("pack")}><rect x="52" y="112" width="96" height="70" rx="12" fill="#8a6a3d" stroke="#5c4422" stroke-width="3"/></g>
-  <g class="part" opacity="${o("antenna")}" ${dash("antenna")}><line x1="100" y1="22" x2="100" y2="48" stroke="#6b7a75" stroke-width="5"/><circle cx="100" cy="17" r="8" fill="#f2b632" stroke="#b07f10" stroke-width="3"/></g>
-  <g class="part" opacity="${o("ears")}" ${dash("ears")}><rect x="44" y="64" width="14" height="30" rx="5" fill="#2f8fbf" stroke="#1c5d7d" stroke-width="3"/><rect x="142" y="64" width="14" height="30" rx="5" fill="#2f8fbf" stroke="#1c5d7d" stroke-width="3"/></g>
-  <rect x="58" y="48" width="84" height="62" rx="16" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/>
-  <g class="part" opacity="${o("helmet")}" ${dash("helmet")}><path d="M54 66 Q100 18 146 66 L146 58 Q100 8 54 58 Z" fill="#1f6f5c" stroke="#0f4436" stroke-width="3"/></g>
-  <g class="part" opacity="${o("eyes")}" ${dash("eyes")}><circle cx="84" cy="80" r="10" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="116" cy="80" r="10" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="86" cy="80" r="4.5" fill="#1b1b1b"/><circle cx="118" cy="80" r="4.5" fill="#1b1b1b"/></g>
-  <path d="M86 98 Q100 106 114 98" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <rect x="64" y="116" width="72" height="66" rx="12" fill="#dfe6e3" stroke="#6b7a75" stroke-width="3"/>
-  <g class="part" opacity="${o("heart")}" ${dash("heart")}><path d="M100 160 L86 146 A8 8 0 0 1 100 136 A8 8 0 0 1 114 146 Z" fill="#d0414f" stroke="#8c1d29" stroke-width="2.5"/></g>
-  <rect x="40" y="122" width="22" height="12" rx="5" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/><rect x="138" y="122" width="22" height="12" rx="5" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/>
-  <g class="part" opacity="${o("shield")}" ${dash("shield")}><path d="M14 118 L40 110 L40 140 Q38 160 27 168 Q16 160 14 140 Z" fill="#3b6fd1" stroke="#1d3f86" stroke-width="3"/><path d="M27 124 v28 M19 136 h16" stroke="#fff" stroke-width="3"/></g>
-  <g class="part" opacity="${o("keys")}" ${dash("keys")}><circle cx="170" cy="140" r="11" fill="none" stroke="#c9952a" stroke-width="4"/><path d="M174 150 l8 22 m-4 -10 l6 -2 m-3 8 l6 -2" stroke="#c9952a" stroke-width="4" fill="none" stroke-linecap="round"/></g>
-  <rect x="76" y="182" width="16" height="26" rx="4" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/><rect x="108" y="182" width="16" height="26" rx="4" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/>
-  <g class="part" opacity="${o("boots")}" ${dash("boots")}><rect x="66" y="204" width="30" height="16" rx="6" fill="#5a3e8a" stroke="#3a2660" stroke-width="3"/><rect x="104" y="204" width="30" height="16" rx="6" fill="#5a3e8a" stroke="#3a2660" stroke-width="3"/></g>
-  </svg>`;
-}
+function questCard(x) {
+  const s = status(x), p = prog(x), f = flash[x.id], tk = st.tick[x.id] || {}, ex = st.extra[x.id] || [], b = st.block[x.id], id = x.id;
+  const cur = x.steps.findIndex((_, k) => !tk[k]);
+  const pri = { r: T.R, a: T.A, g: T.G }[x.p];
+  let line;
+  if (s === "done") line = `<span class="status done">✓ ${esc(t(T.sDone))}</span>`;
+  else if (s === "block") line = `<span class="status block">‖ ${esc(blockText(b))}</span>`;
+  else if (s === "doing") line = `<span class="status doing">→ ${p.d} / ${p.n} ${esc(t(T.stepsDone))}</span><span class="mini"><span style="width:${Math.round(100 * p.d / p.n)}%"></span></span>`;
+  else if (s === "check") line = `<span class="status check">? ${esc(t(T.sCheck))}</span>`;
+  else line = `<span class="status todo">○ ${esc(t(T.sTodo))}</span>`;
 
-function readableAnswers() {
-  return Q.filter(q => !q.show || q.show(st.ans)).map(q => {
-    const o = q.opts.find(([v]) => v === st.ans[q.id]);
-    return `- ${t(q.q)} → ${o ? t(o[1]) : t(DK)}`;
-  }).join("\n");
-}
-function aiBriefing() {
-  const s = state(), de = st.lang === "de";
-  const open = s.todo.filter(x => !st.done[x.id]).map(x => `- [${x.p === "r" ? (de ? "dringend" : "urgent") : (de ? "diese Woche" : "this week")}] ${t(x.title)}`).join("\n");
-  const done = [...s.ok, ...s.todo.filter(x => st.done[x.id])].map(x => `- ${t(x.title)}`).join("\n");
-  return de
-? `Du bist Philia, eine warme, kluge Programmiererin aus dem Spiel Cyber-Quest, und mein geduldiger Coach für IT-Sicherheit. Deine Freundin Ying (ethische Hackerin) spielt die Angreiferin; du verteidigst mit mir. Bleib locker und kurz. Hilf mir, meine eigenen Geräte und Konten abzusichern, Schritt für Schritt.
-
-Regeln:
-- Immer nur eine Aufgabe, mit der dringendsten anfangen.
-- Bevor du Schritte nennst, frag nach meinem genauen Handymodell, der Android/iOS-Version bzw. Betriebssystem-Version des Computers, wo es darauf ankommt.
-- Kurze nummerierte Schritte. Warte, bis ich bestätige, dass ein Schritt geklappt hat. Wenn mein Bildschirm anders aussieht, hilf mir, die Einstellung zu finden.
-- Frag mich NIE nach Passwörtern, PINs, Codes, Wiederherstellungsschlüsseln oder Kartennummern. Wenn ich anfange, so etwas zu tippen, halte mich auf.
-- Rate mir nie, Fernwartungssoftware zu installieren.
-- Erkläre in einem Satz, warum ein Schritt wichtig ist. Antworte auf Deutsch, locker und ermutigend.
-
-Meine Antworten aus dem Cyber-Quest-Check:
-${readableAnswers()}
-
-Offene Aufgaben (dringendste zuerst):
-${open || "- keine"}
-
-Schon erledigt:
-${done || "- noch nichts"}
-
-Fang an: Frag mich nach den Geräte-Details, die du für die erste Aufgabe brauchst.`
-: `You are Philia, a warm, clever programmer from the game Cyber Quest, and my patient cybersecurity coach. Your friend Ying (an ethical hacker) plays the attacker; you defend with me. Keep it light and short. Help me secure my own devices and accounts, step by step.
-
-Rules:
-- One task at a time, starting with the most urgent.
-- Before giving steps, ask for my exact phone model and Android/iOS version, or my computer's OS version, where it matters.
-- Short numbered steps. Wait until I confirm a step worked. If my screen looks different, help me find the setting.
-- NEVER ask me for passwords, PINs, codes, recovery keys or card numbers. If I start typing one, stop me.
-- Never tell me to install remote-access software.
-- Say in one sentence why each step matters. Be relaxed and encouraging. Answer in English.
-
-My answers from the Cyber Quest check:
-${readableAnswers()}
-
-Open tasks (most urgent first):
-${open || "- none"}
-
-Already done:
-${done || "- nothing yet"}
-
-Start by asking me for the device details you need for the first task.`;
-}
-function stuckPrompt(x, i) {
-  const de = st.lang === "de";
-  const dev = readableAnswers().split("\n").slice(0, 7).join("\n");
-  return de
-? `Ich mache gerade meine Geräte sicherer und hänge fest.
-Aufgabe: ${t(x.title)}
-Schritt: ${strip(t(x.steps[i]))}
-Meine Geräte:
-${dev}
-Hilf mir, diese Einstellung zu finden. Frag zuerst nach meinem genauen Modell und der Version und was ich auf dem Bildschirm sehe. Frag nie nach Passwörtern oder Codes. Antworte auf Deutsch, kurz und Schritt für Schritt.`
-: `I'm securing my devices and I'm stuck.
-Task: ${t(x.title)}
-Step: ${strip(t(x.steps[i]))}
-My devices:
-${dev}
-Help me find this setting. First ask for my exact model and version and what I see on screen. Never ask for passwords or codes. Answer in English, short and step by step.`;
-}
-function logText() {
-  const s = state(), de = st.lang === "de";
-  const line = x => `${st.done[x.id] || x.p === "g" ? "[x]" : "[ ]"} ${t(x.title)}`;
-  return `${t(T.title)} – ${st.bot} · ${s.xp} XP · ${t(s.rank)}\n\n` +
-    (de ? "Offen / erledigt:\n" : "To do / done:\n") + s.todo.map(line).join("\n") +
-    (s.ok.length ? (de ? "\n\nSchon gut:\n" : "\n\nAlready good:\n") + s.ok.map(line).join("\n") : "") +
-    `\n\n${de ? "Fortschritt" : "Progress"}: ${s.foiled}/${s.todo.length}`;
-}
-async function copyText(text, btn) {
-  let ok = false;
-  try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
-    const ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
-    document.body.appendChild(ta); ta.select(); try { ok = document.execCommand("copy"); } catch (e2) {} ta.remove();
+  let body = s === "done" ? `<p class="why">${esc(t(x.why))}</p>`
+    : `<div class="mallory who">${img("ying-face", "ava", "Ying")}<div><b>Ying:</b> “${esc(t(M[id] || L("", "")))}”</div></div><p class="why">${esc(t(x.why))}</p>`;
+  if (s === "done" && f === "foiled") {
+    const f2 = FOIL[id.length % FOIL.length];
+    body += `${vid("door")}<div class="foiled" role="status">🎉 ${esc(t(T.foiled))} +${FULL[x.p]} XP · ${esc(t(T.newPart))} ${esc(st.bot)}: ${esc(t(PARTS[partOf(id)].n))}<p class="said"><b>Philia:</b> ${esc(t(f2[0]))}</p><p class="said"><b>Ying:</b> ${esc(t(f2[1]))}</p></div>`;
   }
-  if (btn) { const old = btn.textContent; btn.textContent = ok ? t(T.copied) : "✗"; setTimeout(() => { btn.textContent = old; }, 1800); }
-}
+  if (s === "block" && f !== "blk") body += `<div class="blocker"><p><b>‖ ${esc(t(T.blockedBy))}</b> ${esc(blockText(b))}</p><div class="row"><button class="btn ok" type="button" data-unblock="${id}">▶ ${esc(t(T.resume))}</button><button class="btn" type="button" data-blk="${id}">${esc(t(T.editBlk))}</button></div></div>`;
+  if (s === "check") body += `<div class="note">${esc(t(T.checkTip))}</div><div class="row"><button class="btn ok" type="button" data-verify="${id}">✓ ${esc(t(T.verified))}</button></div>`;
+  if (f === "blk") body += `<div class="blocker"><fieldset><legend>${esc(t(T.blkQ))}</legend>${Object.keys(BR).map(r => `<label class="opt"><input type="radio" name="br-${id}" value="${r}" ${(b ? b.r : "") === r ? "checked" : ""}> ${esc(t(BR[r]))}</label>`).join("")}</fieldset>
+    <label for="bn-${id}">${esc(t(T.blkNote))}</label><input type="text" id="bn-${id}" value="${b ? esc(b.note || "") : ""}" placeholder="${esc(t(T.blkNotePh))}">
+    <label for="bd-${id}">${esc(t(T.blkDate))}</label><input type="date" id="bd-${id}" value="${b ? esc(b.date || "") : ""}">
+    <div class="row"><button class="btn ok" type="button" data-blksave="${id}">${esc(t(T.save))}</button><button class="btn" type="button" data-blkcancel="${id}">${esc(t(T.cancel))}</button></div></div>`;
 
-/* ---------- render ---------- */
-function render() {
-  document.documentElement.lang = st.lang;
-  document.title = t(T.title) + " – " + (st.lang === "de" ? "sicher, wenn KI angreift" : "safe when AI attacks");
-  document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === st.lang)));
-  title.textContent = t(T.title);
-  tagline.textContent = t(T.tagline);
-  sosBtn.textContent = t(T.sos);
-  sos.innerHTML = `<h2>${t(SOS.h)}</h2><ol>${SOS.steps.map(s => `<li>${esc(t(s))}</li>`).join("")}</ol>`;
-  intro.innerHTML = `<h2>${t(T.teamH)}</h2>
-    <div class="duo"><figure class="ph">${img("philia", "", "Philia")}<figcaption><b>Philia</b>${esc(t(T.philiaR))}</figcaption></figure>
-    <figure class="yi">${img("ying", "", "Ying")}<figcaption><b>Ying 林影</b>${esc(t(T.yingR))}</figcaption></figure></div>
-    <p>${esc(t(T.teamTxt))}</p>
-    <details><summary class="btn" style="display:inline-block">${esc(t(T.intro8))}</summary><video class="introvid" src="assets/intro.mp4" poster="assets/intro.webp" controls playsinline preload="none"></video></details>
-    <h2>${t(T.introH)}</h2>${T.intro.map(p => `<p>${esc(t(p))}</p>`).join("")}`;
-  foot.textContent = t(T.foot);
-  renderForm();
-  if (st.shown) renderGame(false); else planEl.innerHTML = "";
-}
-
-function renderForm() {
-  let h = "", sec = "";
-  for (const q of Q) {
-    if (q.show && !q.show(st.ans)) continue;
-    if (q.sec !== sec) { sec = q.sec; h += `<div class="sec-title">${esc(t(SEC[sec]))}</div>`; }
-    const hint = q.hint ? `<p class="hint" id="h-${q.id}">${esc(t(q.hint))}</p>` : "";
-    h += `<fieldset${q.hint ? ` aria-describedby="h-${q.id}"` : ""}><legend>${esc(t(q.q))}</legend>${hint}` +
-      q.opts.map(([v, lab]) => `<label class="opt"><input type="radio" name="${q.id}" value="${v}" ${st.ans[q.id] === v ? "checked" : ""}> ${esc(t(lab))}</label>`).join("") +
-      `</fieldset>`;
-  }
-  h += `<p class="hint">${esc(t(T.missing))}</p><button class="btn primary" type="submit">${esc(t(T.go))}</button>`;
-  form.innerHTML = h;
-}
-
-function questCard(x, s) {
-  const d = !!st.done[x.id], g = x.p === "g", i = Math.min(st.steps[x.id] || 0, x.steps.length);
-  const f = flash[x.id];
-  let body = `<div class="mallory who">${img("ying-face", "ava", "Ying")}<div><b>Ying:</b> “${esc(t(M[x.id] || L("", "")))}”</div></div><p class="why">${esc(t(x.why))}</p>`;
-  if (g || d) {
-    body += `<ol class="steps">${x.steps.map(s => `<li class="ok">${t(s)}</li>`).join("")}</ol>`;
-    if (d && f === "foiled") body += `${vid("door")}<div class="foiled" role="status">🎉 ${esc(t(T.foiled))} +${xpFor(x.p)} XP · ${esc(t(T.newPart))} ${esc(st.bot)}: ${esc(t(PARTS[partOf(x.id)].n))}${(() => { const f2 = FOIL[x.id.length % FOIL.length]; return `<p class="said"><b>Philia:</b> ${esc(t(f2[0]))}</p><p class="said ying"><b>Ying:</b> ${esc(t(f2[1]))}</p>`; })()}</div>`;
-    if (d) body += `<div class="row"><button class="btn" type="button" data-undo="${x.id}">${esc(t(T.undo))}</button></div>`;
-  } else {
-    body += `<p class="mute">${esc(t(T.step))} ${i + 1} ${esc(t(T.of))} ${x.steps.length}</p>
-      <ol class="steps">${x.steps.map((s, k) => `<li class="${k < i ? "ok" : k === i ? "now" : ""}">${t(s)}</li>`).join("")}</ol>
-      <div class="row"><button class="btn ok" type="button" data-next="${x.id}">${esc(t(T.okNext))}</button>
-      <button class="btn" type="button" data-fail="${x.id}">${esc(t(T.notWork))}</button>
-      <button class="btn" type="button" data-stuck="${x.id}">${esc(t(T.stuck))}</button></div>`;
+  body += `<p class="hint">${esc(t(T.tickTip))}</p><ul class="ticks">` +
+    x.steps.map((st_, k) => `<li class="${tk[k] ? "on" : (k === cur && s !== "done" ? "now" : "")}"><label><input type="checkbox" data-tick="${id}:${k}" ${tk[k] ? "checked" : ""}><span>${t(st_)}</span></label></li>`).join("") +
+    ex.map((e, k) => `<li class="own${e.d ? " on" : ""}"><label><input type="checkbox" data-tickx="${id}:${k}" ${e.d ? "checked" : ""}><span>${esc(e.t)}</span></label><button class="btn x" type="button" data-delx="${id}:${k}" aria-label="${esc(t(T.remove))}: ${esc(e.t)}">✕</button></li>`).join("") + `</ul>`;
+  body += `<div class="addown"><label for="ax-${id}" class="hint">${esc(t(T.addOwn))}</label><div class="row"><input type="text" id="ax-${id}" data-axin="${id}" placeholder="${esc(t(T.addPh))}"><button class="btn" type="button" data-addx="${id}">+ ${esc(t(T.add))}</button></div></div>`;
+  if (s === "done") body += `<div class="row"><button class="btn" type="button" data-undo="${id}">${esc(t(T.notDone))}</button></div>`;
+  else {
+    body += `<div class="row">${cur >= 0 ? `<button class="btn" type="button" data-fail="${id}">${esc(t(T.notWork))}</button><button class="btn" type="button" data-stuck="${id}">${esc(t(T.stuck))}</button>` : ""}
+      ${s !== "block" ? `<button class="btn" type="button" data-blk="${id}">${esc(t(T.cant))}</button>` : ""}
+      <button class="btn ok" type="button" data-alldone="${id}">${esc(t(T.allDone))}</button></div>`;
     if (f === "fail") body += `<div class="note">${esc(t(T.notWorkTip))}</div>`;
-    if (f === "fail" || f === "stuck") body += `<p class="hint">${esc(t(T.stuckTip))}</p><textarea readonly id="sp-${x.id}">${esc(stuckPrompt(x, i))}</textarea>
-      <div class="row"><button class="btn" type="button" data-copy="sp-${x.id}">${esc(t(T.copy))}</button></div>`;
-    body += `<label class="done"><input type="checkbox" data-all="${x.id}"> ${esc(t(T.already))}</label>`;
+    if ((f === "fail" || f === "stuck") && cur >= 0) body += `<p class="hint">${esc(t(T.stuckTip))}</p><textarea readonly id="sp-${id}">${esc(stuckPrompt(x, cur))}</textarea>
+      <div class="row"><button class="btn" type="button" data-copy="sp-${id}">${esc(t(T.copy))}</button></div>`;
   }
-  const tag = g ? t(T.G) : (d ? "✓ " + t(T.foiled) : t({ r: T.R, a: T.A }[x.p]));
-  return `<details class="act ${x.p}${d ? " done" : ""}" data-id="${x.id}"${flash[x.id] ? " open" : ""}><summary>${img("icon-" + PICON[partOf(x.id)], "qicon")}<div><span class="tag">${esc(tag)} · ${esc(t(SEC[x.sec]))}</span><h3>${esc(t(x.title))}</h3></div></summary><div class="body">${body}</div></details>`;
+  return `<details class="act ${x.p} st-${s}" data-id="${id}"${f ? " open" : ""}><summary><span class="badge ${s}" aria-hidden="true">${BADGE[s]}</span>${img("icon-" + PICON[partOf(id)], "qicon")}<div class="sumtxt"><span class="tag">${esc(t(pri))} · ${esc(t(SEC[x.sec]))}</span><h3>${esc(t(x.title))}</h3>${line}</div></summary><div class="body">${body}</div></details>`;
 }
 
 function renderGame(scroll = true) {
   st.shown = true; save();
   const s = state();
-  const order = { r: 0, a: 1 };
-  const open = s.todo.filter(x => !st.done[x.id]).sort((x, y) => order[x.p] - order[y.p]);
-  const won = s.todo.filter(x => st.done[x.id]);
   const pct = s.next ? Math.round(100 * s.xp / s.next) : 100;
   const tab = st.tab;
   let h = `<h2 id="planH" tabindex="-1" class="sr">${esc(t(T.title))}</h2>
@@ -817,14 +814,17 @@ function renderGame(scroll = true) {
       <input id="botname" class="botname" type="text" maxlength="24" value="${esc(st.bot)}">
       <p><span class="rank">${esc(t(s.rank))}</span> · ${s.xp} ${esc(t(T.xp))}${s.next ? ` / ${s.next}` : ""}</p>
       <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%"></span></div>
-      <p>${s.foiled} / ${s.todo.length} ${esc(t(T.foiledN))}</p></div></section>
+      <p class="bigdone"><b>${s.doneN} / ${s.total}</b> ${esc(t(T.doneOf))}</p></div></section>
+  <nav class="buckets noprint" aria-label="${esc(t(T.bucketsNav))}">${BKS.map(k => `<button type="button" class="bkchip bk-${k}" data-bk="${k}"${s.by[k].length ? "" : " disabled"}><b>${s.by[k].length}</b><span>${BADGE[k]} ${esc(t(BKL[k]))}</span></button>`).join("")}</nav>
   <div class="tabs noprint" role="tablist">
     <button class="btn" role="tab" type="button" data-tab="quests" aria-selected="${tab === "quests"}">${img("icon-house", "")} ${esc(t(T.tabQ).replace("🛡️ ", ""))}</button>
     <button class="btn" role="tab" type="button" data-tab="tricks" aria-selected="${tab === "tricks"}">${img("icon-masks", "")} ${esc(t(T.tabT).replace("🎭 ", ""))}</button>
     <button class="btn" role="tab" type="button" data-tab="log" aria-selected="${tab === "log"}">${img("icon-crane-mail", "")} ${esc(t(T.tabL).replace("📜 ", ""))}</button></div>`;
   if (tab === "quests") {
-    h += open.map(questCard).join("") + won.map(questCard).join("");
-    if (s.ok.length) h += `<h2>${esc(t(T.okH))}</h2>` + s.ok.map(questCard).join("");
+    for (const k of BKS) {
+      if (!s.by[k].length) continue;
+      h += `<h2 class="bucket-h bh-${k}" id="bk-${k}" tabindex="-1"><span class="badge ${k}" aria-hidden="true">${BADGE[k]}</span>${esc(t(BKL[k]))}<span class="cnt">${s.by[k].length}</span></h2><p class="hint">${esc(t(BKH[k]))}</p>` + s.by[k].map(questCard).join("");
+    }
   } else if (tab === "tricks") {
     h += `<p>${esc(t(T.trickIntro))}</p>` + TRICKS.map(q => {
       const a = st.quiz[q.id];
@@ -860,12 +860,170 @@ function renderGame(scroll = true) {
 
 function keepOpen(fn, focusSel) {
   const open = [...planEl.querySelectorAll("details[open]")].map(d => d.dataset.id);
+  const y = window.scrollY;
   fn();
   renderGame(false);
   open.forEach(id => { const d = planEl.querySelector(`details[data-id="${id}"]`); if (d) d.open = true; });
-  if (focusSel) { const el = planEl.querySelector(focusSel); if (el) el.focus(); }
+  window.scrollTo(0, y);
+  if (focusSel) { const el = planEl.querySelector(focusSel); if (el) { el.focus({ preventScroll: true }); el.scrollIntoView({ block: "nearest" }); } }
 }
-function finish(id) { st.done[id] = true; flash = { [id]: "foiled" }; save(); }
+
+function botSVG(parts) {
+  const o = p => (0.12 + 0.88 * parts[p]).toFixed(2);
+  const dash = p => parts[p] < 1 ? 'stroke-dasharray="4 3"' : "";
+  return `<svg viewBox="0 0 200 230" role="img" aria-label="${esc(st.bot)}">
+  <g class="part" opacity="${o("pack")}" ${dash("pack")}><rect x="52" y="112" width="96" height="70" rx="12" fill="#8a6a3d" stroke="#5c4422" stroke-width="3"/></g>
+  <g class="part" opacity="${o("antenna")}" ${dash("antenna")}><line x1="100" y1="22" x2="100" y2="48" stroke="#6b7a75" stroke-width="5"/><circle cx="100" cy="17" r="8" fill="#f2b632" stroke="#b07f10" stroke-width="3"/></g>
+  <g class="part" opacity="${o("ears")}" ${dash("ears")}><rect x="44" y="64" width="14" height="30" rx="5" fill="#2f8fbf" stroke="#1c5d7d" stroke-width="3"/><rect x="142" y="64" width="14" height="30" rx="5" fill="#2f8fbf" stroke="#1c5d7d" stroke-width="3"/></g>
+  <rect x="58" y="48" width="84" height="62" rx="16" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/>
+  <g class="part" opacity="${o("helmet")}" ${dash("helmet")}><path d="M54 66 Q100 18 146 66 L146 58 Q100 8 54 58 Z" fill="#1f6f5c" stroke="#0f4436" stroke-width="3"/></g>
+  <g class="part" opacity="${o("eyes")}" ${dash("eyes")}><circle cx="84" cy="80" r="10" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="116" cy="80" r="10" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="86" cy="80" r="4.5" fill="#1b1b1b"/><circle cx="118" cy="80" r="4.5" fill="#1b1b1b"/></g>
+  <path d="M86 98 Q100 106 114 98" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <rect x="64" y="116" width="72" height="66" rx="12" fill="#dfe6e3" stroke="#6b7a75" stroke-width="3"/>
+  <g class="part" opacity="${o("heart")}" ${dash("heart")}><path d="M100 160 L86 146 A8 8 0 0 1 100 136 A8 8 0 0 1 114 146 Z" fill="#d0414f" stroke="#8c1d29" stroke-width="2.5"/></g>
+  <rect x="40" y="122" width="22" height="12" rx="5" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/><rect x="138" y="122" width="22" height="12" rx="5" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/>
+  <g class="part" opacity="${o("shield")}" ${dash("shield")}><path d="M14 118 L40 110 L40 140 Q38 160 27 168 Q16 160 14 140 Z" fill="#3b6fd1" stroke="#1d3f86" stroke-width="3"/><path d="M27 124 v28 M19 136 h16" stroke="#fff" stroke-width="3"/></g>
+  <g class="part" opacity="${o("keys")}" ${dash("keys")}><circle cx="170" cy="140" r="11" fill="none" stroke="#c9952a" stroke-width="4"/><path d="M174 150 l8 22 m-4 -10 l6 -2 m-3 8 l6 -2" stroke="#c9952a" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+  <rect x="76" y="182" width="16" height="26" rx="4" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/><rect x="108" y="182" width="16" height="26" rx="4" fill="#cfd8d4" stroke="#6b7a75" stroke-width="3"/>
+  <g class="part" opacity="${o("boots")}" ${dash("boots")}><rect x="66" y="204" width="30" height="16" rx="6" fill="#5a3e8a" stroke="#3a2660" stroke-width="3"/><rect x="104" y="204" width="30" height="16" rx="6" fill="#5a3e8a" stroke="#3a2660" stroke-width="3"/></g>
+  </svg>`;
+}
+
+function readableAnswers() {
+  return Q.filter(q => !q.show || q.show(st.ans)).map(q => {
+    const o = q.opts.find(([v]) => v === st.ans[q.id]);
+    return `- ${t(q.q)} → ${o ? t(o[1]) : t(DK)}`;
+  }).join("\n");
+}
+function aiBriefing() {
+  const s = state(), de = st.lang === "de";
+  const ls = a => a.map(x => "- " + lineFor(x, de)).join("\n");
+  const open = ls([...s.by.doing, ...s.by.todo].sort((a, b) => ({ r: 0, a: 1, g: 2 })[a.p] - ({ r: 0, a: 1, g: 2 })[b.p]));
+  const blocked = ls(s.by.block), check = ls(s.by.check), done = ls(s.by.done);
+  return de
+? `Du bist Philia, eine warme, kluge Programmiererin aus dem Spiel Cyber-Quest, und mein geduldiger Coach für IT-Sicherheit. Deine Freundin Ying (ethische Hackerin) spielt die Angreiferin; du verteidigst mit mir. Bleib locker und kurz. Hilf mir, meine eigenen Geräte und Konten abzusichern, Schritt für Schritt.
+
+Regeln:
+- Immer nur eine Aufgabe, mit der dringendsten anfangen.
+- Bevor du Schritte nennst, frag nach meinem genauen Handymodell, der Android/iOS-Version bzw. Betriebssystem-Version des Computers, wo es darauf ankommt.
+- Kurze nummerierte Schritte. Warte, bis ich bestätige, dass ein Schritt geklappt hat. Wenn mein Bildschirm anders aussieht, hilf mir, die Einstellung zu finden.
+- Frag mich NIE nach Passwörtern, PINs, Codes, Wiederherstellungsschlüsseln oder Kartennummern. Wenn ich anfange, so etwas zu tippen, halte mich auf.
+- Rate mir nie, Fernwartungssoftware zu installieren.
+- Erkläre in einem Satz, warum ein Schritt wichtig ist. Antworte auf Deutsch, locker und ermutigend.
+
+Meine Antworten aus dem Cyber-Quest-Check:
+${readableAnswers()}
+
+Offene Aufgaben (dringendste zuerst):
+${open || "- keine"}
+
+Blockiert oder geplant (hilf mir vorbereiten oder planen, aber dräng nicht):
+${blocked || "- keine"}
+
+Laut meinen Antworten in Ordnung, aber noch nicht geprüft (je 1 Minute prüfen lassen):
+${check || "- keine"}
+
+Schon erledigt:
+${done || "- noch nichts"}
+
+Fang an: Frag mich nach den Geräte-Details, die du für die erste Aufgabe brauchst.`
+: `You are Philia, a warm, clever programmer from the game Cyber Quest, and my patient cybersecurity coach. Your friend Ying (an ethical hacker) plays the attacker; you defend with me. Keep it light and short. Help me secure my own devices and accounts, step by step.
+
+Rules:
+- One task at a time, starting with the most urgent.
+- Before giving steps, ask for my exact phone model and Android/iOS version, or my computer's OS version, where it matters.
+- Short numbered steps. Wait until I confirm a step worked. If my screen looks different, help me find the setting.
+- NEVER ask me for passwords, PINs, codes, recovery keys or card numbers. If I start typing one, stop me.
+- Never tell me to install remote-access software.
+- Say in one sentence why each step matters. Be relaxed and encouraging. Answer in English.
+
+My answers from the Cyber Quest check:
+${readableAnswers()}
+
+Open tasks (most urgent first):
+${open || "- none"}
+
+Blocked or planned (help me prepare or plan, don't push):
+${blocked || "- none"}
+
+Fine according to my answers, but not checked yet (have me check each in a minute):
+${check || "- none"}
+
+Already done:
+${done || "- nothing yet"}
+
+Start by asking me for the device details you need for the first task.`;
+}
+function stuckPrompt(x, i) {
+  const de = st.lang === "de";
+  const dev = readableAnswers().split("\n").slice(0, 7).join("\n");
+  return de
+? `Ich mache gerade meine Geräte sicherer und hänge fest.
+Aufgabe: ${t(x.title)}
+Schritt: ${strip(t(x.steps[i]))}
+Meine Geräte:
+${dev}
+Hilf mir, diese Einstellung zu finden. Frag zuerst nach meinem genauen Modell und der Version und was ich auf dem Bildschirm sehe. Frag nie nach Passwörtern oder Codes. Antworte auf Deutsch, kurz und Schritt für Schritt.`
+: `I'm securing my devices and I'm stuck.
+Task: ${t(x.title)}
+Step: ${strip(t(x.steps[i]))}
+My devices:
+${dev}
+Help me find this setting. First ask for my exact model and version and what I see on screen. Never ask for passwords or codes. Answer in English, short and step by step.`;
+}
+function logText() {
+  const s = state(), de = st.lang === "de";
+  let o = `${t(T.title)} – ${st.bot} · ${s.xp} XP · ${t(s.rank)}\n${s.doneN} / ${s.total} ${t(T.doneOf)}\n`;
+  for (const k of BKS) {
+    if (!s.by[k].length) continue;
+    o += `\n${BADGE[k]} ${t(BKL[k])} (${s.by[k].length})\n` + s.by[k].map(x => "  - " + lineFor(x, de)).join("\n") + "\n";
+  }
+  return o;
+}
+async function copyText(text, btn) {
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+    const ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); try { ok = document.execCommand("copy"); } catch (e2) {} ta.remove();
+  }
+  if (btn) { const old = btn.textContent; btn.textContent = ok ? t(T.copied) : "✗"; setTimeout(() => { btn.textContent = old; }, 1800); }
+}
+
+/* ---------- render ---------- */
+function render() {
+  document.documentElement.lang = st.lang;
+  document.title = t(T.title) + " – " + (st.lang === "de" ? "sicher, wenn KI angreift" : "safe when AI attacks");
+  document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === st.lang)));
+  title.textContent = t(T.title);
+  tagline.textContent = t(T.tagline);
+  sosBtn.textContent = t(T.sos);
+  sos.innerHTML = `<h2>${t(SOS.h)}</h2><ol>${SOS.steps.map(s => `<li>${esc(t(s))}</li>`).join("")}</ol>`;
+  intro.innerHTML = `<h2>${t(T.teamH)}</h2>
+    <div class="duo"><figure class="ph">${img("philia", "", "Philia")}<figcaption><b>Philia</b>${esc(t(T.philiaR))}</figcaption></figure>
+    <figure class="yi">${img("ying", "", "Ying")}<figcaption><b>Ying 林影</b>${esc(t(T.yingR))}</figcaption></figure></div>
+    <p>${esc(t(T.teamTxt))}</p>
+    <h2>${t(T.introH)}</h2>${T.intro.map(p => `<p>${esc(t(p))}</p>`).join("")}`;
+  foot.textContent = t(T.foot);
+  renderForm();
+  const hideQ = !!st.shown && !st.editing;
+  form.hidden = hideQ; intro.hidden = hideQ;
+  if (st.shown) renderGame(false); else planEl.innerHTML = "";
+}
+
+function renderForm() {
+  let h = "", sec = "";
+  for (const q of Q) {
+    if (q.show && !q.show(st.ans)) continue;
+    if (q.sec !== sec) { sec = q.sec; h += `<div class="sec-title">${esc(t(SEC[sec]))}</div>`; }
+    const hint = q.hint ? `<p class="hint" id="h-${q.id}">${esc(t(q.hint))}</p>` : "";
+    h += `<fieldset${q.hint ? ` aria-describedby="h-${q.id}"` : ""}><legend>${esc(t(q.q))}</legend>${hint}` +
+      q.opts.map(([v, lab]) => `<label class="opt"><input type="radio" name="${q.id}" value="${v}" ${st.ans[q.id] === v ? "checked" : ""}> ${esc(t(lab))}</label>`).join("") +
+      `</fieldset>`;
+  }
+  h += `<p class="hint">${esc(t(T.missing))}</p><button class="btn primary" type="submit">${esc(t(T.go))}</button>`;
+  form.innerHTML = h;
+}
+
 
 async function sendChat() {
   const inp = $("chatIn"), txt = inp.value.trim(); if (!txt) return;
@@ -897,20 +1055,39 @@ form.addEventListener("change", e => {
   const el = form.querySelector(`input[name="${e.target.name}"][value="${e.target.value}"]`); if (el) el.focus({ preventScroll: true });
   if (st.shown) renderGame(false);
 });
-form.addEventListener("submit", e => { e.preventDefault(); st.tab = "quests"; renderGame(); });
+form.addEventListener("submit", e => { e.preventDefault(); st.tab = "quests"; st.editing = false; form.hidden = true; intro.hidden = true; renderGame(); });
 planEl.addEventListener("click", e => {
   const b = e.target.closest("button,a"); if (!b) return;
   const d = b.dataset;
   if (d.tab) { st.tab = d.tab; flash = {}; save(); renderGame(false); planEl.querySelector(`[data-tab="${d.tab}"]`).focus(); return; }
-  if (d.next) {
-    const x = state().list.find(q => q.id === d.next);
-    keepOpen(() => { st.steps[x.id] = (st.steps[x.id] || 0) + 1; flash = {}; if (st.steps[x.id] >= x.steps.length) finish(x.id); save(); },
-      st.done[x.id] ? `details[data-id="${x.id}"] summary` : `[data-next="${x.id}"]`);
+  if (d.bk) {
+    if (st.tab !== "quests") { st.tab = "quests"; flash = {}; save(); renderGame(false); }
+    const hh = $("bk-" + d.bk); if (hh) { hh.scrollIntoView({ block: "start" }); hh.focus({ preventScroll: true }); }
     return;
   }
   if (d.fail) { keepOpen(() => { flash = { [d.fail]: "fail" }; }, `[data-fail="${d.fail}"]`); return; }
   if (d.stuck) { keepOpen(() => { flash = { [d.stuck]: "stuck" }; }, `#sp-${d.stuck}`); return; }
-  if (d.undo) { keepOpen(() => { delete st.done[d.undo]; st.steps[d.undo] = 0; flash = {}; save(); }); return; }
+  if (d.undo) {
+    keepOpen(() => {
+      delete st.done[d.undo];
+      const tk = st.tick[d.undo] || {}; const ks = Object.keys(tk).filter(k => tk[k]).map(Number).sort((a, c) => c - a);
+      if (ks.length) delete tk[ks[0]];
+      flash = {}; save();
+    }, `details[data-id="${d.undo}"] summary`);
+    return;
+  }
+  if (d.alldone || d.verify) { const id = d.alldone || d.verify; keepOpen(() => finish(id), `details[data-id="${id}"] summary`); return; }
+  if (d.blk) { keepOpen(() => { flash = { [d.blk]: "blk" }; }, `input[name="br-${d.blk}"]`); return; }
+  if (d.blkcancel) { keepOpen(() => { flash = {}; }, `details[data-id="${d.blkcancel}"] summary`); return; }
+  if (d.blksave) {
+    const id = d.blksave, r = planEl.querySelector(`input[name="br-${id}"]:checked`);
+    const note = $("bn-" + id).value.trim(), date = $("bd-" + id).value;
+    keepOpen(() => { st.block[id] = { r: r ? r.value : (note ? "wait" : "how"), note, date }; flash = {}; save(); }, `details[data-id="${id}"] summary`);
+    return;
+  }
+  if (d.unblock) { keepOpen(() => { delete st.block[d.unblock]; flash = {}; save(); }, `details[data-id="${d.unblock}"] summary`); return; }
+  if (d.addx) { addOwn(d.addx); return; }
+  if (d.delx) { const [id, k] = d.delx.split(":"); keepOpen(() => { st.extra[id].splice(+k, 1); save(); }, `#ax-${id}`); return; }
   if (d.q) {
     const q = TRICKS.find(x => x.id === d.q);
     st.quiz[q.id] = { a: d.a, right: (d.a === "real") === q.real }; save();
@@ -920,12 +1097,29 @@ planEl.addEventListener("click", e => {
   if (d.copy) { copyText($(d.copy).value, b); return; }
   if (b.id === "chatSend") { sendChat(); return; }
   if (b.id === "forgetKey") { st.key = ""; save(); $("orKey").value = ""; return; }
-  if (b.id === "editBtn") { form.scrollIntoView({ block: "start" }); return; }
+  if (b.id === "editBtn") { st.editing = true; save(); form.hidden = false; intro.hidden = false; form.scrollIntoView({ block: "start" }); const f1 = form.querySelector("input"); if (f1) f1.focus({ preventScroll: true }); return; }
   if (b.id === "resetBtn" && !b.dataset.armed) { b.dataset.armed = "1"; b.textContent = t(T.resetQ); return; }
-  if (b.id === "resetBtn") { st = { lang: st.lang, ans: {}, done: {}, steps: {}, quiz: {}, bot: "Bit", tab: "quests", model: st.model, key: st.key }; chat = []; flash = {}; save(); render(); window.scrollTo(0, 0); }
+  if (b.id === "resetBtn") { st = { lang: st.lang, ans: {}, done: {}, steps: {}, tick: {}, block: {}, extra: {}, v2: true, quiz: {}, bot: "Bit", tab: "quests", model: st.model, key: st.key }; chat = []; flash = {}; save(); render(); window.scrollTo(0, 0); }
 });
+function addOwn(id) {
+  const inp = $("ax-" + id), v = inp.value.trim(); if (!v) return;
+  keepOpen(() => { (st.extra[id] = st.extra[id] || []).push({ t: v, d: false }); delete st.done[id]; flash = {}; save(); }, `#ax-${id}`);
+}
+planEl.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.dataset.axin) { e.preventDefault(); addOwn(e.target.dataset.axin); } });
 planEl.addEventListener("change", e => {
-  if (e.target.dataset.all) { const id = e.target.dataset.all; keepOpen(() => finish(id), `details[data-id="${id}"] summary`); }
+  const v = e.target.dataset.tick, vx = e.target.dataset.tickx;
+  if (!v && !vx) return;
+  const [id, k] = (v || vx).split(":"), on = e.target.checked;
+  const x = plan(st.ans).find(q => q.id === id);
+  keepOpen(() => {
+    if (v) { const tk = st.tick[id] = st.tick[id] || {}; if (on) tk[k] = true; else delete tk[k]; }
+    else st.extra[id][+k].d = on;
+    flash = {};
+    if (!on) delete st.done[id];
+    const p = prog(x);
+    if (on && p.d === p.n) finish(id);
+    save();
+  }, `[data-${v ? "tick" : "tickx"}="${v || vx}"]`);
 });
 planEl.addEventListener("input", e => {
   if (e.target.id === "botname") { st.bot = e.target.value.trim() || "Bit"; save(); }
