@@ -968,6 +968,7 @@ function importCode(v) {
     save(); return true; } catch (e) { return false; }
 }
 if ((location.hash || "").startsWith("#load=")) { importCode(decodeURIComponent(location.hash.slice(6))); history.replaceState(null, "", location.pathname + location.search); }
+window.addEventListener("hashchange", () => { if ((location.hash || "").startsWith("#load=")) { const ok = importCode(decodeURIComponent(location.hash.slice(6))); history.replaceState(null, "", location.pathname + location.search); if (ok) render(); } });
 function upkeepHTML() {
   const nc = st.nextCheck || plusDays(today(), 90);
   return `<section class="card" id="upkeep"><h2>🔔 ${esc(t(T.upH))}</h2><p class="hint">${esc(t(T.upTip))}</p>
