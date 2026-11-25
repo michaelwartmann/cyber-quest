@@ -159,6 +159,23 @@ ul.ticks li.own span::before{content:"★ ";color:var(--a)}
 .finale h2{font-size:1.6rem;margin:.6rem 0 .3rem;color:var(--g)}
 .wonbar{background:var(--g-bg);border:3px solid var(--g);border-radius:.9rem;padding:.8rem 1rem;margin:.8rem 0;text-align:center}
 .wonbar b{display:block;font-size:1.25rem;color:var(--g)}
+.next{border:3px solid var(--acc);box-shadow:0 2px 0 var(--acc)}
+.next .tag{font-weight:800;color:var(--acc);text-transform:uppercase;letter-spacing:.05em;font-size:.85rem;margin:0}
+.next h2{margin:.2rem 0;font-size:1.25rem}
+.next.win{border-color:var(--g);background:var(--g-bg)}
+.btn.aibtn{background:var(--b-bg);color:var(--b);border-color:var(--b);font-weight:700}
+.aibox{margin:.6rem 0}
+.due{border:3px solid var(--a);background:var(--a-bg)}
+.arealist{list-style:none;padding:0;margin:.4rem 0}
+.arealist li{display:grid;grid-template-columns:1fr auto 6.5rem;gap:.6rem;align-items:center;padding:.35rem 0;border-bottom:1px solid var(--line)}
+.arealist .al{font-weight:700;font-size:.92rem}
+.bars{display:inline-flex;gap:3px}.bars i{display:block;width:1.3rem;height:.7rem;border-radius:.2rem;background:var(--line)}
+.bars.l1 i:nth-child(1){background:var(--a)}
+.bars.l2 i:nth-child(-n+2){background:var(--b)}
+.bars.l3 i{background:var(--g)}
+.srcs ul{padding-left:1.2rem;font-size:.92rem}
+@media print{.hero,.tabs,.buckets,.next,.due,.areas .hint,#sosBtn,.hq svg,.hq .botname,.hq label,.aibox,.addown,.row,footer,.wonbar button{display:none!important}
+  details.act{border:1px solid #999!important;background:#fff!important}details.act .body{display:none!important}.bucket-h{break-after:avoid}}
 input[type=date]{min-height:44px;font:inherit;border:1px solid var(--line);border-radius:.5rem;padding:.3rem .5rem;background:var(--bg);color:var(--ink)}
 </style>
 </head>
@@ -192,6 +209,19 @@ let st = { lang: null, ans: {}, done: {} };
 try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) st = Object.assign(st, s); } catch (e) {}
 function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
 if (!st.lang) st.lang = (navigator.language || "en").toLowerCase().startsWith("de") ? "de" : "en";
+/* v3: several computers. Old single answer "pc" → list; its quests get the system in their id. */
+(function migrate() {
+  const a = st.ans || {};
+  if (typeof a.pc !== "string") return;
+  const os = a.pc; a.pc = [os];
+  if (os !== "none") {
+    if (a.pcUpd !== undefined) a["pcUpd_" + os] = a.pcUpd;
+    if (a.enc !== undefined) a["enc_" + os] = a.enc;
+    for (const k of ["done", "tick", "block", "extra"]) { const o = st[k]; if (!o) continue;
+      for (const b of ["pcUpd", "enc"]) if (o[b] !== undefined) { o[b + "-" + os] = o[b]; delete o[b]; } }
+  }
+  delete a.pcUpd; delete a.enc; save();
+})();
 const t = o => (o && (o[st.lang] ?? o.en)) || "";
 const L = (en, de) => ({ en, de });
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -220,8 +250,8 @@ const T = {
   resetQ: L("Tap again: delete all answers and ticks", "Nochmal tippen: alle Antworten und Häkchen löschen"),
   edit: L("Change answers", "Antworten ändern"),
   missing: L("Unanswered questions count as “don't know”.", "Unbeantwortete Fragen zählen als „weiß nicht“."),
-  foot: L("Draft, Nov 2026. Based on BSI, Verbraucherzentrale, NCSC (UK) and FBI/FTC advice. No accounts, no tracking, nothing leaves your phone. MIT licence.",
-          "Entwurf, Nov. 2026. Grundlage: Empfehlungen von BSI, Verbraucherzentrale, NCSC (UK) und FBI/FTC. Keine Konten, kein Tracking, nichts verlässt dein Gerät. MIT-Lizenz.")
+  foot: L("Nov 2026. Based on BSI, Verbraucherzentrale, NCSC (UK) and FBI/FTC advice. No accounts, no tracking, nothing leaves your phone. MIT licence.",
+          "Nov. 2026. Grundlage: Empfehlungen von BSI, Verbraucherzentrale, NCSC (UK) und FBI/FTC. Keine Konten, kein Tracking, nichts verlässt dein Gerät. MIT-Lizenz.")
 };
 
 const SOS = {
@@ -253,6 +283,10 @@ const SEC = {
   ppl: L("People & scams", "Menschen & Betrug")
 };
 const DK = L("Don't know", "Weiß nicht");
+const OSES = ["win11", "win10", "mac", "linux", "chrome"];
+const OSN = { win11: "Windows 11", win10: "Windows 10", mac: "Mac", linux: "Linux", chrome: "Chromebook" };
+const arr = v => Array.isArray(v) ? v : (v === undefined || v === null || v === "" ? [] : [v]);
+const pcs = a => arr(a.pc).filter(x => x !== "none");
 const Q = [
   { id: "phone", sec: "dev", q: L("Which phone do you use?", "Welches Handy nutzt du?"),
     opts: [["ios", L("iPhone", "iPhone")], ["android", L("Android (Samsung, Pixel, Xiaomi …)", "Android (Samsung, Pixel, Xiaomi …)")], ["none", L("No smartphone", "Kein Smartphone")]] },
@@ -266,15 +300,20 @@ const Q = [
   { id: "apps", sec: "dev", show: a => a.phone && a.phone !== "none",
     q: L("Where do your apps come from?", "Woher stammen deine Apps?"),
     opts: [["store", L("Only the official store", "Nur aus dem offiziellen Store")], ["other", L("Also from websites / other stores", "Auch von Webseiten / anderen Stores")], ["dk", DK]] },
-  { id: "pc", sec: "dev", q: L("Which computer do you use?", "Welchen Computer nutzt du?"),
-    opts: [["win11", L("Windows 11", "Windows 11")], ["win10", L("Windows 10", "Windows 10")], ["mac", L("Mac", "Mac")], ["linux", L("Linux", "Linux")], ["chrome", L("Chromebook", "Chromebook")], ["none", L("No computer", "Kein Computer")]] },
-  { id: "pcUpd", sec: "dev", show: a => a.pc && a.pc !== "none",
-    q: L("Does the computer install updates automatically?", "Installiert der Computer Updates automatisch?"),
-    opts: [["ok", L("Yes", "Ja")], ["no", L("Manually / not sure", "Manuell / nicht sicher")]] },
-  { id: "enc", sec: "dev", show: a => a.pc && a.pc !== "none" && a.pc !== "chrome",
-    q: L("Is the computer's disk encrypted?", "Ist die Festplatte des Computers verschlüsselt?"),
-    hint: L("BitLocker / Device encryption (Windows), FileVault (Mac), LUKS (Linux).", "BitLocker / Geräteverschlüsselung (Windows), FileVault (Mac), LUKS (Linux)."),
-    opts: [["yes", L("Yes", "Ja")], ["no", L("No", "Nein")], ["dk", DK]] },
+  { id: "pc", sec: "dev", type: "multi", q: L("Which computers do you use? Tick all, also a second system on the same laptop.", "Welche Computer nutzt du? Alle ankreuzen, auch ein zweites System auf demselben Laptop."),
+    opts: [["win11", L("Windows 11", "Windows 11")], ["win10", L("Windows 10", "Windows 10")], ["mac", L("Mac", "Mac")], ["linux", L("Linux", "Linux")], ["chrome", L("Chromebook", "Chromebook")], ["none", L("No computer", "Kein Computer"), true]] },
+  ...OSES.flatMap(os => [
+    { id: "pcUpd_" + os, sec: "dev", show: a => pcs(a).includes(os),
+      q: L(`${OSN[os]}: does it install security updates automatically?`, `${OSN[os]}: Installiert er Sicherheitsupdates automatisch?`),
+      opts: [["ok", L("Yes", "Ja")], ["no", L("Manually / not sure", "Manuell / nicht sicher")]] },
+    ...(os === "chrome" ? [] : [{ id: "enc_" + os, sec: "dev", show: a => pcs(a).includes(os),
+      q: L(`${OSN[os]}: is the disk encrypted?`, `${OSN[os]}: Ist die Festplatte verschlüsselt?`),
+      hint: L({ win11: "BitLocker or Device encryption.", win10: "BitLocker or Device encryption.", mac: "FileVault.", linux: "LUKS, chosen when it was installed." }[os], { win11: "BitLocker oder Geräteverschlüsselung.", win10: "BitLocker oder Geräteverschlüsselung.", mac: "FileVault.", linux: "LUKS, bei der Installation gewählt." }[os]),
+      opts: [["yes", L("Yes", "Ja")], ["no", L("No", "Nein")], ["dk", DK]] }])
+  ]),
+  { id: "menuLang", sec: "dev", q: L("In which language are your phone's and computer's menus?", "In welcher Sprache sind die Menüs von Handy und Computer?"),
+    hint: L("So your AI helper names the buttons the way you see them.", "Damit dein KI-Helfer die Knöpfe so nennt, wie du sie siehst."),
+    opts: [["en", L("English", "Englisch")], ["de", L("German", "Deutsch")], ["nl", L("Dutch", "Niederländisch")], ["zh", L("Chinese", "Chinesisch")], ["other", L("Another language", "Eine andere Sprache")]] },
 
   { id: "pm", sec: "acc", q: L("How do you keep your passwords?", "Wie verwaltest du deine Passwörter?"),
     opts: [["pm", L("Password manager, for everything", "Passwort-Manager, für alles")], ["browser", L("The browser saves them", "Der Browser speichert sie")], ["mix", L("Partly manager, partly elsewhere", "Teils Manager, teils woanders")], ["none", L("Memory, paper, or similar", "Im Kopf, auf Papier o. Ä.")]] },
@@ -318,7 +357,7 @@ const Q = [
 function plan(a) {
   const out = [];
   const add = (id, p, sec, title, why, steps) => out.push({ id, p, sec, title, why, steps });
-  const ph = a.phone, pc = a.pc;
+  const ph = a.phone, pcl = pcs(a);
 
   /* phone updates */
   if (ph && ph !== "none") {
@@ -367,8 +406,8 @@ function plan(a) {
        L("Never install remote-control apps (AnyDesk, TeamViewer …) for a caller. Real support doesn't call you.", "Nie Fernwartungs-Apps (AnyDesk, TeamViewer …) für einen Anrufer installieren. Echter Support ruft nicht an.")]);
   }
 
-  /* computer */
-  if (pc && pc !== "none") {
+  /* computers: one updates quest and one encryption quest per system */
+  for (const pc of pcs(a)) {
     const S = {
       win11: [L("Settings → Windows Update: install everything; turn on “Get the latest updates as soon as they're available”.", "Einstellungen → Windows Update: alles installieren; „Die neuesten Updates erhalten, sobald sie verfügbar sind“ einschalten."),
               L("Windows Security → Firewall & network protection: all three networks “on”. Virus & threat protection: on.", "Windows-Sicherheit → Firewall- & Netzwerkschutz: alle drei Netzwerke „ein“. Viren- & Bedrohungsschutz: ein."),
@@ -387,16 +426,11 @@ function plan(a) {
       chrome:[L("Updates are automatic: restart when it asks.", "Updates kommen automatisch: neu starten, wenn er fragt."),
               L("Settings → About ChromeOS → Additional details → Update schedule: check the end date.", "Einstellungen → Über ChromeOS → Weitere Details → Update-Zeitplan: Enddatum prüfen.")]
     }[pc];
-    const pr = pc === "win10" ? "r" : (a.pcUpd === "ok" ? "g" : "r");
-    add("pcUpd", pr, "dev", pc === "win10" ? L("Windows 10: get the extra security updates, plan the move", "Windows 10: Zusatz-Sicherheitsupdates holen, Wechsel planen") : L("Updates and firewall on the computer", "Updates und Firewall auf dem Computer"),
+    const pr = pc === "win10" ? "r" : (a["pcUpd_" + pc] === "ok" ? "g" : "r");
+    add("pcUpd-" + pc, pr, "dev", pc === "win10" ? L("Windows 10: get the extra security updates, plan the move", "Windows 10: Zusatz-Sicherheitsupdates holen, Wechsel planen") : L(`${OSN[pc]}: updates and firewall`, `${OSN[pc]}: Updates und Firewall`),
       L("Agents scan the internet for unpatched machines around the clock.", "Agenten durchsuchen das Netz rund um die Uhr nach ungepatchten Rechnern."), S);
-    add("browser", "a", "dev", L("Browser: updated, few extensions", "Browser: aktuell, wenige Erweiterungen"),
-      L("Extensions can read everything you see, including bank pages. Some are sold to criminals.", "Erweiterungen können alles lesen, was du siehst, auch Bankseiten. Manche werden an Kriminelle verkauft."),
-      [L("Open the browser's menu → Extensions/Add-ons: remove all you don't really need.", "Browser-Menü → Erweiterungen/Add-ons: alle entfernen, die du nicht wirklich brauchst."),
-       L("Menu → Help → About: let it update and restart.", "Menü → Hilfe → Über: aktualisieren lassen und neu starten."),
-       L("Turn on the browser's strongest safe-browsing mode (Chrome: “Enhanced protection”; Firefox: “Block dangerous and deceptive content”).", "Stärksten Schutzmodus einschalten (Chrome: „Erweiterter Schutz“; Firefox: „Gefährliche und betrügerische Inhalte blockieren“).")]);
     if (pc !== "chrome")
-      add("enc", a.enc === "yes" ? "g" : "a", "dev", L("Encrypt the computer's disk", "Festplatte des Computers verschlüsseln"),
+      add("enc-" + pc, a["enc_" + pc] === "yes" ? "g" : "a", "dev", L(`${OSN[pc]}: encrypt the disk`, `${OSN[pc]}: Festplatte verschlüsseln`),
         L("If the laptop is stolen, an encrypted disk is just noise to the thief.", "Wird der Laptop gestohlen, ist eine verschlüsselte Platte für den Dieb nur Datenmüll."),
         {
           win11: [L("Settings → Privacy & security → Device encryption (Home) or search “BitLocker” (Pro): turn on.", "Einstellungen → Datenschutz & Sicherheit → Geräteverschlüsselung (Home) oder „BitLocker“ suchen (Pro): einschalten."),
@@ -411,6 +445,12 @@ function plan(a) {
                   L("Encrypt the external backup drive too (Disks → format with LUKS).", "Die externe Backup-Platte auch verschlüsseln (Laufwerke → mit LUKS formatieren).")]
         }[pc]);
   }
+  if (pcs(a).length)
+  add("browser", "a", "dev", L("Browser: updated, few extensions", "Browser: aktuell, wenige Erweiterungen"),
+      L("Extensions can read everything you see, including bank pages. Some are sold to criminals.", "Erweiterungen können alles lesen, was du siehst, auch Bankseiten. Manche werden an Kriminelle verkauft."),
+      [L("Open the browser's menu → Extensions/Add-ons: remove all you don't really need.", "Browser-Menü → Erweiterungen/Add-ons: alle entfernen, die du nicht wirklich brauchst."),
+       L("Menu → Help → About: let it update and restart.", "Menü → Hilfe → Über: aktualisieren lassen und neu starten."),
+       L("Turn on the browser's strongest safe-browsing mode (Chrome: “Enhanced protection”; Firefox: “Block dangerous and deceptive content”).", "Stärksten Schutzmodus einschalten (Chrome: „Erweiterter Schutz“; Firefox: „Gefährliche und betrügerische Inhalte blockieren“).")]);
 
   /* accounts */
   const pmP = a.pm === "pm" ? "g" : a.pm === "none" ? "r" : "a";
@@ -425,7 +465,7 @@ function plan(a) {
      L("Let it autofill. If it doesn't offer your password on a page, stop: the page may be fake.", "Automatisch ausfüllen lassen. Bietet er auf einer Seite dein Passwort nicht an: stopp, die Seite ist evtl. gefälscht.")]);
   add("reuse", a.reuse === "never" ? "g" : a.reuse === "often" ? "r" : "a", "acc", L("No password twice", "Kein Passwort doppelt"),
     L("Leaked passwords are tried on hundreds of sites automatically within hours.", "Geleakte Passwörter werden automatisch binnen Stunden auf Hunderten Seiten ausprobiert."),
-    [L("Clean out first: accounts you no longer need get deleted, not fixed (account settings → delete; no button → a GDPR deletion request by email). Add each one below as your own item.", "Erst ausmisten: Konten, die du nicht mehr brauchst, werden gelöscht, nicht repariert (Kontoeinstellungen → löschen; kein Knopf → DSGVO-Löschantrag per Mail). Jedes unten als eigenen Punkt eintragen."),
+    [L("Clean out first: accounts you no longer need get deleted, not fixed (account settings → delete). No button? Email the company's privacy address: “Please delete my account [your email] and all my personal data under Art. 17 GDPR, and confirm in writing.” Add each account below as your own item.", "Erst ausmisten: Konten, die du nicht mehr brauchst, werden gelöscht, nicht repariert (Kontoeinstellungen → löschen). Kein Knopf? An die Datenschutz-Adresse der Firma mailen: „Bitte löschen Sie mein Konto [deine E-Mail] und alle meine personenbezogenen Daten nach Art. 17 DSGVO und bestätigen Sie das schriftlich.“ Jedes Konto unten als eigenen Punkt eintragen."),
      L("Then merge duplicates in the manager: one entry per site and login.", "Dann Doppelte im Manager zusammenführen: ein Eintrag pro Seite und Login."),
      L("Then change, leaked passwords first (haveibeenpwned.com), then accounts without 2FA. Order: email → phone carrier → bank/PayPal → Apple/Google/Microsoft → social media → shopping → the rest.", "Dann ändern, geleakte Passwörter zuerst (haveibeenpwned.com), dann Konten ohne 2FA. Reihenfolge: E-Mail → Mobilfunk → Bank/PayPal → Apple/Google/Microsoft → soziale Netzwerke → Shopping → Rest."),
      L("For each: let the manager generate a new password. Save it only after the site confirms the change.", "Für jedes: vom Manager ein neues Passwort erzeugen lassen. Erst speichern, wenn die Seite die Änderung bestätigt."),
@@ -462,7 +502,8 @@ function plan(a) {
      L("Set a long, unique admin password (save it in the manager).", "Langes, eigenes Admin-Passwort setzen (im Manager speichern)."),
      L("Turn on automatic updates; install the latest firmware now.", "Automatische Updates einschalten; neueste Firmware jetzt installieren."),
      L("Turn off what you don't use: remote access from the internet, WPS, UPnP, port forwarding.", "Abschalten, was du nicht nutzt: Fernzugriff aus dem Internet, WPS, UPnP, Portfreigaben."),
-     L("If the provider no longer updates it, ask for a new one.", "Bekommt er vom Anbieter keine Updates mehr: neuen anfordern.")]);
+     L("If the provider no longer updates it, ask for a new one.", "Bekommt er vom Anbieter keine Updates mehr: neuen anfordern."),
+     L("Open the list of connected devices. Do you know every one? Unknown ones: change the Wi-Fi password and reconnect your own devices.", "Die Liste der verbundenen Geräte öffnen. Kennst du jedes? Unbekannte: WLAN-Passwort ändern und eigene Geräte neu verbinden.")]);
   add("wifi", a.wifi === "strong" ? "g" : a.wifi === "weak" ? "r" : "a", "home", L("A strong Wi-Fi", "Ein starkes WLAN"),
     L("Anyone on your Wi-Fi can reach your devices directly.", "Wer in deinem WLAN ist, erreicht deine Geräte direkt."),
     [L("In the router: Wi-Fi security WPA2 + WPA3 (or WPA3 only if all devices cope). Never WEP or “open”.", "Im Router: WLAN-Sicherheit WPA2 + WPA3 (oder nur WPA3, wenn alle Geräte es können). Nie WEP oder „offen“."),
@@ -484,10 +525,12 @@ function plan(a) {
     [ph === "ios" ? L("iPhone: Settings → your name → iCloud → iCloud Backup: on.", "iPhone: Einstellungen → dein Name → iCloud → iCloud-Backup: ein.")
       : ph === "android" ? L("Android: Settings → search “Backup” → Google backup: on (photos via Google Photos or similar).", "Android: Einstellungen → „Sicherung“ suchen → Google-Sicherung: ein (Fotos über Google Fotos o. Ä.).")
       : L("Phone: none, skip.", "Handy: keins, überspringen."),
-     pc === "mac" ? L("Mac: plug in an external drive → Time Machine → back up automatically.", "Mac: externe Platte anschließen → Time Machine → automatisch sichern.")
-      : (pc === "win11" || pc === "win10") ? L("Windows: external drive + “File History” (search in Start) or Windows Backup.", "Windows: externe Platte + „Dateiversionsverlauf“ (im Start suchen) oder Windows-Sicherung.")
-      : pc === "linux" ? L("Linux: Déjà Dup (“Backups”) to an encrypted external drive.", "Linux: Déjà Dup („Datensicherungen“) auf eine verschlüsselte externe Platte.")
-      : L("Copy photos and documents to an external drive.", "Fotos und Dokumente auf eine externe Platte kopieren."),
+     ...(pcl.length ? [...new Set(pcl.map(pc => pc.startsWith("win") ? "win" : pc))].map(pc => ({
+       mac: L("Mac: plug in an external drive → Time Machine → back up automatically.", "Mac: externe Platte anschließen → Time Machine → automatisch sichern."),
+       win: L("Windows: external drive + “File History” (search in Start) or Windows Backup.", "Windows: externe Platte + „Dateiversionsverlauf“ (im Start suchen) oder Windows-Sicherung."),
+       linux: L("Linux: Déjà Dup (“Backups”) to an encrypted external drive.", "Linux: Déjà Dup („Datensicherungen“) auf eine verschlüsselte externe Platte."),
+       chrome: L("Chromebook: files in Google Drive; copy important ones to an external drive too.", "Chromebook: Dateien in Google Drive; wichtige zusätzlich auf eine externe Platte kopieren.")
+     }[pc])) : [L("Copy photos and documents to an external drive.", "Fotos und Dokumente auf eine externe Platte kopieren.")]),
      L("Unplug the external drive after each backup. Keep a second one at family or work, swap monthly.", "Externe Platte nach jedem Backup abstecken. Eine zweite bei Familie oder Arbeit lagern, monatlich tauschen."),
      L("Once a year: try to restore one file. A backup you never tested is a hope, not a backup.", "Einmal im Jahr: eine Datei testweise zurückholen. Ein ungetestetes Backup ist eine Hoffnung, kein Backup.")]);
 
@@ -541,7 +584,7 @@ const $ = id => document.getElementById(id);
 const title = $("title"), tagline = $("tagline"), sosBtn = $("sosBtn"), sos = $("sos"), intro = $("intro"), foot = $("foot"), form = $("form"), planEl = $("plan");
 st.steps = st.steps || {}; st.quiz = st.quiz || {}; st.bot = st.bot || "Bit"; st.tab = st.tab || "quests";
 st.model = st.model || "openrouter/auto"; st.key = st.key || "";
-let chat = [], flash = {};
+let chat = [], flash = {}, wins = 0, moreOk = false;
 const RM = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const vid = (n, cls = "anim") => `<video class="${cls}" src="assets/${n}.mp4" poster="assets/${n}.webp" muted loop playsinline ${RM ? "" : "autoplay"} aria-hidden="true"></video>`;
 const img = (n, cls, alt = "") => `<img class="${cls}" src="assets/${n}.webp" alt="${esc(alt)}">`;
@@ -585,8 +628,8 @@ Object.assign(T, {
   chatErr: L("Couldn't reach OpenRouter. Check the key and connection. (In the preview inside Claude this is blocked; it works in the installed app.)",
              "OpenRouter nicht erreichbar. Schlüssel und Verbindung prüfen. (In der Vorschau in Claude ist das gesperrt; in der installierten App klappt es.)"),
   noKey: L("Enter your key first.", "Zuerst Schlüssel eingeben."),
-  foot: L("Draft, Nov 2026. Based on BSI, Verbraucherzentrale, NCSC (UK) and FBI/FTC advice. No accounts, no tracking, nothing leaves your phone unless you send it. MIT licence.",
-          "Entwurf, Nov. 2026. Grundlage: Empfehlungen von BSI, Verbraucherzentrale, NCSC (UK) und FBI/FTC. Keine Konten, kein Tracking, nichts verlässt dein Gerät, außer du schickst es. MIT-Lizenz.")
+  foot: L("Nov 2026. Based on BSI, Verbraucherzentrale, NCSC (UK) and FBI/FTC advice. No accounts, no tracking, nothing leaves your phone unless you send it. MIT licence.",
+          "Nov. 2026. Grundlage: Empfehlungen von BSI, Verbraucherzentrale, NCSC (UK) und FBI/FTC. Keine Konten, kein Tracking, nichts verlässt dein Gerät, außer du schickst es. MIT-Lizenz.")
 });
 
 Object.assign(T, {
@@ -612,7 +655,8 @@ const PARTS = {
   pack:    { n: L("backpack (backups)", "Rucksack (Backups)"), ids: ["backup"] },
   boots:   { n: L("boots (home network)", "Stiefel (Heimnetz)"), ids: ["router", "wifi", "iot"] }
 };
-const partOf = id => Object.keys(PARTS).find(p => PARTS[p].ids.includes(id));
+const baseId = id => id.split("-")[0];
+const partOf = id => Object.keys(PARTS).find(p => PARTS[p].ids.includes(baseId(id)));
 
 /* Ying's announcements (red team) and Philia's replies (blue team) */
 const M = {
@@ -689,6 +733,32 @@ Object.assign(T, {
   blkNotePh: L("e.g. at the next visit to my parents", "z. B. beim nächsten Besuch bei meinen Eltern"),
   blkDate: L("Planned for (optional)", "Geplant für (optional)"), save: L("Save", "Speichern"), cancel: L("Cancel", "Abbrechen"),
   bucketsNav: L("Your doors by status", "Deine Türen nach Stand"),
+  tickAll: L("Tick all that apply.", "Alles ankreuzen, was zutrifft."),
+  aiDo: L("Do it with your AI", "Mit deiner KI erledigen"), aiCheck: L("Check it with your AI", "Mit deiner KI prüfen"),
+  aiQuestTip: L("Copy this into the AI you use. It knows your devices and this task, checks the steps against the maker's current help pages, and walks you through. No passwords or codes inside – never type any into a chat.",
+                "In die KI kopieren, die du nutzt. Sie kennt deine Geräte und diese Aufgabe, prüft die Schritte an den aktuellen Hilfeseiten des Herstellers und führt dich durch. Keine Passwörter oder Codes darin – tipp nie welche in einen Chat."),
+  askHere: L("Ask Philia here", "Philia hier fragen"),
+  nextH: L("Your next step", "Dein nächster Schritt"), stepOf: L("Step", "Schritt"),
+  checkNext: L("Check that this is really done.", "Prüfe, ob das wirklich erledigt ist."),
+  openQ: L("Open the quest", "Quest öffnen"), doneStep: L("✓ Done", "✓ Erledigt"),
+  winsToday: L("doors closed today", "Türen heute geschlossen"),
+  stopWin: L("Three today. Stop on a win – Ying will still be there tomorrow, and you'll be fresher.", "Drei heute. Mit einem Erfolg aufhören – Ying ist morgen auch noch da, und du bist frischer."),
+  oneMore: L("One more", "Noch eine"),
+  allBlocked: L("Everything open is blocked or planned. Look at the purple cards for dates.", "Alles Offene ist blockiert oder geplant. Termine stehen auf den lila Karten."),
+  dueH: L("Time for your check-up", "Zeit für deinen Check-up"),
+  dueTxt: L("Devices, apps and scams have changed since your last round. Ask your AI what's new for your devices, and re-check three done items.", "Geräte, Apps und Betrugsmaschen haben sich seit deiner letzten Runde verändert. Frag deine KI, was es Neues für deine Geräte gibt, und prüfe drei erledigte Punkte neu."),
+  dueGo: L("Check-up with your AI", "Check-up mit deiner KI"), dueDone: L("Done – next in 3 months", "Erledigt – nächster in 3 Monaten"),
+  upH: L("Keep it up", "Dranbleiben"), upTip: L("The digital world changes every month. Every three months: a short check-up with your AI. Put it in your calendar.", "Die digitale Welt ändert sich jeden Monat. Alle drei Monate: ein kurzer Check-up mit deiner KI. Trag ihn in den Kalender ein."),
+  upDate: L("Next check-up", "Nächster Check-up"), upIcs: L("Add to calendar", "In den Kalender"),
+  mvH: L("Move to another device", "Auf ein anderes Gerät mitnehmen"),
+  mvTip: L("Half the work happens on the computer, half on the phone. The link or code carries your answers, ticks and notes – no passwords, no server. Send it to yourself, open it on the other device.", "Die Hälfte der Arbeit passiert am Computer, die andere am Handy. Link oder Code tragen deine Antworten, Häkchen und Notizen – keine Passwörter, kein Server. An dich selbst schicken, auf dem anderen Gerät öffnen."),
+  mvLink: L("Copy link", "Link kopieren"), mvCode: L("Copy code", "Code kopieren"), mvPaste: L("Or paste a code here", "Oder hier einen Code einfügen"),
+  mvLoad: L("Load code", "Code laden"), mvOk: L("Loaded ✓", "Geladen ✓"), mvBad: L("That isn't a Cyber Quest code.", "Das ist kein Cyber-Quest-Code."),
+  prH: L("Print my plan", "Plan drucken"), prTip: L("Status and blockers per quest – for the fridge, or for the visit to your family.", "Stand und Blocker pro Quest – für den Kühlschrank oder den Besuch bei der Familie."),
+  srcH: L("Sources", "Quellen"), srcTip: L("Checked November 2026. Menus and tricks change; when a step doesn't match your screen, your AI and the maker's help pages are the up-to-date source.", "Geprüft im November 2026. Menüs und Tricks ändern sich; passt ein Schritt nicht zu deinem Bildschirm, sind deine KI und die Hilfeseiten des Herstellers die aktuelle Quelle."),
+  areasH: L("How hard is your home to get into?", "Wie schwer kommt man in dein Zuhause?"),
+  wayIn: L("Ying's easiest way in:", "Yings leichtester Weg hinein:"),
+  lv: [L("Wide open", "Weit offen"), L("Basic", "Grundschutz"), L("Solid", "Solide"), L("Locked", "Verriegelt")],
   winH: L("Quest complete! Every door is closed.", "Quest geschafft! Jede Tür ist zu."),
   winTxt: L("Ying folds one last paper crane, leaves it on your doorstep and bows. Philia puts the kettle on. Your digital home is harder to break into than almost every house on the street.",
             "Ying faltet einen letzten Papierkranich, legt ihn auf deine Türschwelle und verbeugt sich. Philia setzt Tee auf. Dein digitales Zuhause ist schwerer zu knacken als fast jedes Haus in der Straße."),
@@ -747,7 +817,7 @@ function state() {
   const xp = list.reduce((s, x) => s + xpOf(x), 0) + TRICKS.filter(q => st.quiz[q.id] && st.quiz[q.id].right).length * 10;
   const parts = {};
   for (const p in PARTS) {
-    const mine = list.filter(x => PARTS[p].ids.includes(x.id));
+    const mine = list.filter(x => PARTS[p].ids.includes(baseId(x.id)));
     parts[p] = mine.length ? mine.reduce((s, x) => { const g = prog(x); return s + (st.done[x.id] ? 1 : 0.8 * g.d / Math.max(g.n, 1)); }, 0) / mine.length : 1;
   }
   let rank = RANKS[0][1]; for (const [n, r] of RANKS) if (xp >= n) rank = r;
@@ -771,7 +841,7 @@ function lineFor(x, de) {
 function finish(id) {
   const x = plan(st.ans).find(q => q.id === id);
   if (x) { const tk = st.tick[id] = st.tick[id] || {}; x.steps.forEach((_, k) => tk[k] = true); (st.extra[id] || []).forEach(e => e.d = true); }
-  st.done[id] = true; delete st.block[id]; flash = { [id]: "foiled" }; save();
+  st.done[id] = true; delete st.block[id]; flash = { [id]: "foiled" }; wins++; save();
   const all = plan(st.ans); if (all.length && all.every(q => st.done[q.id])) setTimeout(showFinale, 400);
 }
 function showFinale() {
@@ -804,7 +874,7 @@ function questCard(x) {
   else line = `<span class="status todo">○ ${esc(t(T.sTodo))}</span>`;
 
   let body = s === "done" ? `<p class="why">${esc(t(x.why))}</p>`
-    : `<div class="mallory who">${img("ying-face", "ava", "Ying")}<div><b>Ying:</b> “${esc(t(M[id] || L("", "")))}”</div></div><p class="why">${esc(t(x.why))}</p>`;
+    : `<div class="mallory who">${img("ying-face", "ava", "Ying")}<div><b>Ying:</b> “${esc(t(M[baseId(id)] || L("", "")))}”</div></div><p class="why">${esc(t(x.why))}</p>`;
   if (s === "done" && f === "foiled") {
     const f2 = FOIL[id.length % FOIL.length];
     body += `${vid("door")}<div class="foiled" role="status">🎉 ${esc(t(T.foiled))} +${FULL[x.p]} XP · ${esc(t(T.newPart))} ${esc(st.bot)}: ${esc(t(PARTS[partOf(id)].n))}<p class="said"><b>Philia:</b> ${esc(t(f2[0]))}</p><p class="said"><b>Ying:</b> ${esc(t(f2[1]))}</p></div>`;
@@ -816,24 +886,157 @@ function questCard(x) {
     <label for="bd-${id}">${esc(t(T.blkDate))}</label><input type="date" id="bd-${id}" value="${b ? esc(b.date || "") : ""}">
     <div class="row"><button class="btn ok" type="button" data-blksave="${id}">${esc(t(T.save))}</button><button class="btn" type="button" data-blkcancel="${id}">${esc(t(T.cancel))}</button></div></div>`;
 
+  if (s !== "done") {
+    body += `<div class="aibox"><button class="btn aibtn" type="button" data-ai="${id}" aria-expanded="${f === "ai"}">🤖 ${esc(t(s === "check" ? T.aiCheck : T.aiDo))}</button>`;
+    if (f === "ai") body += `<p class="hint">${esc(t(T.aiQuestTip))}</p><textarea readonly id="ap-${id}">${esc(questPrompt(x, cur, false))}</textarea>
+      <div class="row"><button class="btn primary" type="button" data-copy="ap-${id}">${esc(t(T.copy))}</button>${st.key ? `<button class="btn" type="button" data-aihere="${id}">💬 ${esc(t(T.askHere))}</button>` : ""}</div>${AILINKS}`;
+    body += `</div>`;
+  }
   body += `<p class="hint">${esc(t(T.tickTip))}</p><ul class="ticks">` +
     x.steps.map((st_, k) => `<li class="${tk[k] ? "on" : (k === cur && s !== "done" ? "now" : "")}"><label><input type="checkbox" data-tick="${id}:${k}" ${tk[k] ? "checked" : ""}><span>${t(st_)}</span></label></li>`).join("") +
     ex.map((e, k) => `<li class="own${e.d ? " on" : ""}"><label><input type="checkbox" data-tickx="${id}:${k}" ${e.d ? "checked" : ""}><span>${esc(e.t)}</span></label><button class="btn x" type="button" data-delx="${id}:${k}" aria-label="${esc(t(T.remove))}: ${esc(e.t)}">✕</button></li>`).join("") + `</ul>`;
   body += `<div class="addown"><label for="ax-${id}" class="hint">${esc(t(T.addOwn))}</label><div class="row"><input type="text" id="ax-${id}" data-axin="${id}" placeholder="${esc(t(T.addPh))}"><button class="btn" type="button" data-addx="${id}">+ ${esc(t(T.add))}</button></div></div>`;
   if (s === "done") body += `<div class="row"><button class="btn" type="button" data-undo="${id}">${esc(t(T.notDone))}</button></div>`;
   else {
-    body += `<div class="row">${cur >= 0 ? `<button class="btn" type="button" data-fail="${id}">${esc(t(T.notWork))}</button><button class="btn" type="button" data-stuck="${id}">${esc(t(T.stuck))}</button>` : ""}
+    body += `<div class="row">${cur >= 0 ? `<button class="btn" type="button" data-fail="${id}">${esc(t(T.notWork))}</button>` : ""}
       ${s !== "block" ? `<button class="btn" type="button" data-blk="${id}">${esc(t(T.cant))}</button>` : ""}
       <button class="btn ok" type="button" data-alldone="${id}">${esc(t(T.allDone))}</button></div>`;
     if (f === "fail") body += `<div class="note">${esc(t(T.notWorkTip))}</div>`;
-    if ((f === "fail" || f === "stuck") && cur >= 0) body += `<p class="hint">${esc(t(T.stuckTip))}</p><textarea readonly id="sp-${id}">${esc(stuckPrompt(x, cur))}</textarea>
+    if (f === "fail" && cur >= 0) body += `<p class="hint">${esc(t(T.stuckTip))}</p><textarea readonly id="sp-${id}">${esc(stuckPrompt(x, cur))}</textarea>
       <div class="row"><button class="btn" type="button" data-copy="sp-${id}">${esc(t(T.copy))}</button></div>`;
   }
   return `<details class="act ${x.p} st-${s}" data-id="${id}"${f ? " open" : ""}><summary><span class="badge ${s}" aria-hidden="true">${BADGE[s]}</span>${img("icon-" + PICON[partOf(id)], "qicon")}<div class="sumtxt"><span class="tag">${esc(t(pri))} · ${esc(t(SEC[x.sec]))}</span><h3>${esc(t(x.title))}</h3>${line}</div></summary><div class="body">${body}</div></details>`;
 }
 
+/* upkeep: the digital world changes, so the quest comes back every few months */
+const today = () => new Date().toISOString().slice(0, 10);
+const plusDays = (d, n) => { const x = new Date(d + "T12:00"); x.setDate(x.getDate() + n); return x.toISOString().slice(0, 10); };
+function dueHTML() {
+  if (!st.nextCheck || today() < st.nextCheck) return "";
+  return `<section class="card due" role="status"><h2>🔔 ${esc(t(T.dueH))}</h2><p>${esc(t(T.dueTxt))}</p>
+    <div class="row"><button class="btn primary" type="button" data-recheck="1">🤖 ${esc(t(T.dueGo))}</button><button class="btn" type="button" data-checkdone="1">${esc(t(T.dueDone))}</button></div></section>`;
+}
+function checkupPrompt() {
+  const de = st.lang === "de", s = state();
+  const done = s.by.done.map(x => "- " + t(x.title)).join("\n") || "-";
+  return de
+? `Du bist Philia, meine Sicherheits-Trainerin aus Cyber-Quest. Zeit für meinen Vierteljahres-Check. Heute ist der ${fmtDate(today())}.
+
+Meine Geräte:
+${devLines()}
+Sprache meiner Menüs: ${menuLangName()}
+
+Was ich schon abgesichert habe:
+${done}
+
+Bitte:
+1. Was hat sich in den letzten drei Monaten geändert, das für meine Geräte und Konten zählt? (Ende der Updates, neue Betrugsmaschen, neue oder verschobene Einstellungen, große Datenlecks.) Wenn du im Web suchen kannst, tu es und nenne Quellen mit Datum. Wenn nicht, sag das.
+2. Welche 3 meiner erledigten Punkte soll ich jetzt neu prüfen, und wie, in je einer Minute?
+3. Gibt es etwas Neues, das ich tun sollte? Höchstens drei Dinge, dringendstes zuerst.
+Frag nie nach Passwörtern oder Codes. Antworte auf Deutsch, kurz.`
+: `You are Philia, my security coach from Cyber Quest. Time for my quarterly check-up. Today is ${fmtDate(today())}.
+
+My devices:
+${devLines()}
+Language of my menus: ${menuLangName()}
+
+What I've already secured:
+${done}
+
+Please:
+1. What changed in the last three months that matters for my devices and accounts? (End of updates, new scams, new or moved settings, big data leaks.) If you can search the web, do it and name sources with dates. If you can't, say so.
+2. Which 3 of my done items should I re-check now, and how, in a minute each?
+3. Is there anything new I should do? At most three things, most urgent first.
+Never ask for passwords or codes. Answer in English, briefly.`;
+}
+function icsFile(date) {
+  const d = date.replace(/-/g, ""), stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+  const sum = st.lang === "de" ? "Cyber-Quest: Vierteljahres-Check" : "Cyber Quest: quarterly check-up";
+  const desc = (st.lang === "de" ? "Cyber-Quest öffnen und den Check-up mit deiner KI machen: " : "Open Cyber Quest and do the check-up with your AI: ") + location.href.split("#")[0];
+  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Cyber Quest//EN", "BEGIN:VEVENT", `UID:cyberquest-${stamp}@cyber-quest`, `DTSTAMP:${stamp}`,
+    `DTSTART;VALUE=DATE:${d}`, `SUMMARY:${sum}`, `DESCRIPTION:${desc}`, "RRULE:FREQ=MONTHLY;INTERVAL=3", "BEGIN:VALARM", "TRIGGER:PT9H", "ACTION:DISPLAY", `DESCRIPTION:${sum}`, "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+}
+/* move to another device: everything in one code, nothing goes to a server */
+function exportCode() {
+  const o = { ans: st.ans, done: st.done, tick: st.tick, block: st.block, extra: st.extra, quiz: st.quiz, bot: st.bot, nextCheck: st.nextCheck || "" };
+  return "cyberquest1:" + btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+}
+function importCode(v) {
+  v = (v || "").trim(); if (!v.startsWith("cyberquest1:")) return false;
+  try { const o = JSON.parse(decodeURIComponent(escape(atob(v.slice(12))))); if (!o.ans) return false;
+    Object.assign(st, { ans: o.ans, done: o.done || {}, tick: o.tick || {}, block: o.block || {}, extra: o.extra || {}, quiz: o.quiz || {}, bot: o.bot || st.bot, nextCheck: o.nextCheck || "", shown: true, v2: true, editing: false });
+    save(); return true; } catch (e) { return false; }
+}
+if ((location.hash || "").startsWith("#load=")) { importCode(decodeURIComponent(location.hash.slice(6))); history.replaceState(null, "", location.pathname + location.search); }
+function upkeepHTML() {
+  const nc = st.nextCheck || plusDays(today(), 90);
+  return `<section class="card" id="upkeep"><h2>🔔 ${esc(t(T.upH))}</h2><p class="hint">${esc(t(T.upTip))}</p>
+    <label for="ncDate">${esc(t(T.upDate))}</label><input type="date" id="ncDate" value="${esc(nc)}">
+    <div class="row"><button class="btn" type="button" data-ics="1">📅 ${esc(t(T.upIcs))}</button><button class="btn" type="button" data-cup="1" aria-expanded="${!!flash.checkup}">🤖 ${esc(t(T.dueGo))}</button></div>
+    ${flash.checkup ? `<textarea readonly id="cupTxt">${esc(checkupPrompt())}</textarea><div class="row"><button class="btn primary" type="button" data-copy="cupTxt">${esc(t(T.copy))}</button></div>${AILINKS}` : ""}</section>
+  <section class="card" id="move"><h2>📲 ${esc(t(T.mvH))}</h2><p class="hint">${esc(t(T.mvTip))}</p>
+    <div class="row"><button class="btn" type="button" data-mvlink="1">🔗 ${esc(t(T.mvLink))}</button><button class="btn" type="button" data-mvcode="1">${esc(t(T.mvCode))}</button></div>
+    <label for="mvIn">${esc(t(T.mvPaste))}</label><textarea id="mvIn" style="min-height:4rem" spellcheck="false" autocomplete="off"></textarea>
+    <div class="row"><button class="btn" type="button" data-mvload="1">${esc(t(T.mvLoad))}</button></div><p class="hint" id="mvMsg" aria-live="polite"></p></section>
+  <section class="card"><h2>🖨 ${esc(t(T.prH))}</h2><p class="hint">${esc(t(T.prTip))}</p><div class="row"><button class="btn" type="button" data-print="1">${esc(t(T.prH))}</button></div></section>`;
+}
+function sourcesHTML() {
+  return `<section class="card srcs"><h2>${esc(t(T.srcH))}</h2><p class="hint">${esc(t(T.srcTip))}</p><ul>
+    <li>BSI – ${st.lang === "de" ? "Basisschutz für Computer und Mobilgeräte" : "basic protection for computers and mobile devices"} (bsi.bund.de)</li>
+    <li>Verbraucherzentrale – ${st.lang === "de" ? "Passwörter, Phishing, Betrug am Telefon" : "passwords, phishing, phone scams"} (verbraucherzentrale.de)</li>
+    <li>NCSC (UK) – Cyber Aware ${st.lang === "de" ? "und Empfehlung für Passkeys" : "and passkey advice"} (ncsc.gov.uk)</li>
+    <li>CISA (US) – Secure Our World (cisa.gov)</li>
+    <li>FBI IC3 – ${st.lang === "de" ? "Warnung vor KI-Stimm- und Videoklonen, Dez. 2024, mit Codewort-Empfehlung" : "warning on AI voice and video cloning, Dec 2024, recommends a code word"} (ic3.gov)</li>
+    <li>Have I Been Pwned (haveibeenpwned.com), HPI Identity Leak Checker (sec.hpi.de/ilc)</li></ul></section>`;
+}
+/* the one next step, Standby-style: always say what to do now */
+function pickNext(s) {
+  const pr = { r: 0, a: 1, g: 2 }, dg = x => status(x) === "doing" ? 0 : 1;
+  const c = [...s.by.doing, ...s.by.todo].sort((a, b) => pr[a.p] - pr[b.p] || dg(a) - dg(b));
+  return c[0] || s.by.check[0] || null;
+}
+function nextHTML(s) {
+  if (!s.total || s.doneN === s.total) return "";
+  const head = `<p class="tag">➜ ${esc(t(T.nextH))}${wins ? ` · 🎉 ${wins} ${esc(t(T.winsToday))}` : ""}</p>`;
+  if (wins >= 3 && !moreOk) return `<section class="card next win">${head}<p>${esc(t(T.stopWin))}</p><div class="row"><button class="btn" type="button" data-onemore="1">${esc(t(T.oneMore))}</button></div></section>`;
+  const x = pickNext(s);
+  if (!x) return `<section class="card next">${head}<p>${esc(t(T.allBlocked))}</p></section>`;
+  const tk = st.tick[x.id] || {}, ex = st.extra[x.id] || [], cur = x.steps.findIndex((_, k) => !tk[k]), ck = status(x) === "check";
+  const own = ex.findIndex(e => !e.d);
+  let step, done;
+  if (ck) { step = esc(t(T.checkNext)); done = `<button class="btn ok" type="button" data-verify="${x.id}">✓ ${esc(t(T.verified))}</button>`; }
+  else if (cur >= 0) { step = `<b>${esc(t(T.stepOf))} ${cur + 1} / ${x.steps.length}:</b> ${t(x.steps[cur])}`; done = `<button class="btn ok" type="button" data-ntick="${x.id}:${cur}">${esc(t(T.doneStep))}</button>`; }
+  else { step = `<b>★</b> ${esc(ex[own].t)}`; done = `<button class="btn ok" type="button" data-ntickx="${x.id}:${own}">${esc(t(T.doneStep))}</button>`; }
+  return `<section class="card next" aria-labelledby="nextT">${head}
+    <div class="who">${img("icon-" + PICON[partOf(x.id)], "qicon")}<h2 id="nextT">${esc(t(x.title))}</h2></div>
+    <p>${step}</p>
+    <div class="row">${done}<button class="btn aibtn" type="button" data-nai="${x.id}">🤖 ${esc(t(ck ? T.aiCheck : T.aiDo))}</button></div>
+    <div class="row"><button class="btn" type="button" data-open="${x.id}">${esc(t(T.openQ))}</button><button class="btn" type="button" data-nblk="${x.id}">${esc(t(T.cant))}</button></div></section>`;
+}
+/* one honest level per area, like Standby's chains */
+function areas(s) {
+  const W = { r: 3, a: 2, g: 1 };
+  return Object.keys(SEC).map(k => {
+    const xs = s.list.filter(x => x.sec === k); if (!xs.length) return null;
+    let w = 0, v = 0;
+    xs.forEach(x => { const q = status(x), p = prog(x); w += W[x.p]; v += W[x.p] * (q === "done" ? 1 : q === "check" ? 0.5 : 0.8 * p.d / Math.max(p.n, 1)); });
+    const sc = v / w; return { k, sc, lv: sc > 0.999 ? 3 : sc >= 0.7 ? 2 : sc >= 0.4 ? 1 : 0 };
+  }).filter(Boolean);
+}
+function areasHTML(s) {
+  const ar = areas(s); if (!ar.length) return "";
+  const weak = ar.filter(a => a.lv < 3).sort((a, b) => a.sc - b.sc)[0];
+  return `<section class="card areas"><h2>${esc(t(T.areasH))}</h2><ul class="arealist">${ar.map(a => `<li><span class="an">${esc(t(SEC[a.k]))}</span><span class="bars l${a.lv}" aria-hidden="true"><i></i><i></i><i></i></span><span class="al">${esc(t(T.lv[a.lv]))}</span></li>`).join("")}</ul>
+    ${weak ? `<p>${esc(t(T.wayIn))} <b>${esc(t(SEC[weak.k]))}</b></p>` : ""}</section>`;
+}
+function openCard(id, mode, focusSel) {
+  st.tab = "quests"; flash = mode ? { [id]: mode } : {}; save(); renderGame(false);
+  const d = planEl.querySelector(`details[data-id="${id}"]`); if (!d) return;
+  d.open = true; d.scrollIntoView({ block: "start" });
+  const el = (focusSel && planEl.querySelector(focusSel)) || d.querySelector("summary"); el.focus({ preventScroll: true });
+}
 function renderGame(scroll = true) {
-  st.shown = true; save();
+  st.shown = true; if (!st.nextCheck) st.nextCheck = plusDays(today(), 90); save();
   const s = state();
   const pct = s.next ? Math.round(100 * s.xp / s.next) : 100;
   const tab = st.tab;
@@ -844,6 +1047,7 @@ function renderGame(scroll = true) {
       <p><span class="rank">${esc(t(s.rank))}</span> · ${s.xp} ${esc(t(T.xp))}${s.next ? ` / ${s.next}` : ""}</p>
       <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%"></span></div>
       <p class="bigdone"><b>${s.doneN} / ${s.total}</b> ${esc(t(T.doneOf))}</p></div></section>
+  ${dueHTML()}${nextHTML(s)}${areasHTML(s)}
   ${s.total && s.doneN === s.total ? `<div class="wonbar"><b>🎉 ${esc(t(T.winH))}</b><button class="btn ok" type="button" id="finBtn">${esc(t(T.winWatch))}</button></div>` : ""}
   <nav class="buckets noprint" aria-label="${esc(t(T.bucketsNav))}">${BKS.map(k => `<button type="button" class="bkchip bk-${k}" data-bk="${k}"${s.by[k].length ? "" : " disabled"}><b>${s.by[k].length}</b><span>${BADGE[k]} ${esc(t(BKL[k]))}</span></button>`).join("")}</nav>
   <div class="tabs noprint" role="tablist">
@@ -855,6 +1059,7 @@ function renderGame(scroll = true) {
       if (!s.by[k].length) continue;
       h += `<h2 class="bucket-h bh-${k}" id="bk-${k}" tabindex="-1"><span class="badge ${k}" aria-hidden="true">${BADGE[k]}</span>${esc(t(BKL[k]))}<span class="cnt">${s.by[k].length}</span></h2><p class="hint">${esc(t(BKH[k]))}</p>` + s.by[k].map(questCard).join("");
     }
+    h += sourcesHTML();
   } else if (tab === "tricks") {
     h += `<p>${esc(t(T.trickIntro))}</p>` + TRICKS.map(q => {
       const a = st.quiz[q.id];
@@ -866,7 +1071,7 @@ function renderGame(scroll = true) {
   } else {
     const log = logText();
     const mailHref = "mailto:?subject=" + encodeURIComponent(t(T.title) + " – " + t(T.logH)) + "&body=" + encodeURIComponent(log);
-    h += `<section class="card"><h2>${esc(t(T.logH))}</h2><p class="hint">${esc(t(T.logTip))}</p>
+    h += upkeepHTML() + `<section class="card"><h2>${esc(t(T.logH))}</h2><p class="hint">${esc(t(T.logTip))}</p>
       <textarea readonly id="logTxt">${esc(log)}</textarea>
       <div class="row"><button class="btn" type="button" data-copy="logTxt">${esc(t(T.copy))}</button><a class="btn" href="${mailHref}">✉️ ${esc(t(T.mail))}</a></div></section>
     <section class="card"><h2>${esc(t(T.aiH))}</h2><div class="who">${img("philia-face", "ava big", "Philia")}<p><b>${esc(t(T.coachH))}</b></p></div>${vid("philia-cheer")}<p class="hint">${esc(t(T.aiTip))}</p>
@@ -919,10 +1124,10 @@ function botSVG(parts) {
   </svg>`;
 }
 
-function readableAnswers() {
-  return Q.filter(q => !q.show || q.show(st.ans)).map(q => {
-    const o = q.opts.find(([v]) => v === st.ans[q.id]);
-    return `- ${t(q.q)} → ${o ? t(o[1]) : t(DK)}`;
+function readableAnswers(secs) {
+  return Q.filter(q => (!q.show || q.show(st.ans)) && (!secs || secs.includes(q.sec))).map(q => {
+    const v = arr(st.ans[q.id]), o = q.opts.filter(([k]) => v.includes(k)).map(x => t(x[1]));
+    return `- ${t(q.q)} → ${o.length ? o.join(", ") : t(DK)}`;
   }).join("\n");
 }
 function aiBriefing() {
@@ -984,23 +1189,67 @@ ${done || "- nothing yet"}
 
 Start by asking me for the device details you need for the first task.`;
 }
-function stuckPrompt(x, i) {
-  const de = st.lang === "de";
-  const dev = readableAnswers().split("\n").slice(0, 7).join("\n");
-  return de
-? `Ich mache gerade meine Geräte sicherer und hänge fest.
-Aufgabe: ${t(x.title)}
-Schritt: ${strip(t(x.steps[i]))}
-Meine Geräte:
-${dev}
-Hilf mir, diese Einstellung zu finden. Frag zuerst nach meinem genauen Modell und der Version und was ich auf dem Bildschirm sehe. Frag nie nach Passwörtern oder Codes. Antworte auf Deutsch, kurz und Schritt für Schritt.`
-: `I'm securing my devices and I'm stuck.
-Task: ${t(x.title)}
-Step: ${strip(t(x.steps[i]))}
-My devices:
-${dev}
-Help me find this setting. First ask for my exact model and version and what I see on screen. Never ask for passwords or codes. Answer in English, short and step by step.`;
+const CHECKED = L("November 2026", "November 2026");
+function devLines() { return readableAnswers(["dev"]); }
+function menuLangName() {
+  const v = st.ans.menuLang, q = Q.find(x => x.id === "menuLang"), o = q && q.opts.find(([k]) => k === v);
+  return o ? t(o[1]) : (st.lang === "de" ? "unbekannt – frag mich" : "unknown – ask me");
 }
+// One prompt per quest: the person works through it with their own AI, which checks the steps against today's reality.
+function questPrompt(x, i, stuck) {
+  const de = st.lang === "de", s = status(x), tk = st.tick[x.id] || {};
+  const steps = x.steps.map((p, k) => `${k + 1}. ${tk[k] ? (de ? "[erledigt] " : "[done] ") : ""}${strip(t(p))}`).join("\n");
+  const own = (st.extra[x.id] || []).map(e => `- ${e.d ? (de ? "[erledigt] " : "[done] ") : ""}${e.t}`).join("\n");
+  const where = s === "check" ? (de ? "Laut meiner Antwort schon erledigt – hilf mir, das in einer Minute zu prüfen." : "My answer says this is already done – help me check that in a minute.")
+    : i >= 0 && i < x.steps.length ? (de ? `Ich bin bei Schritt ${i + 1} von ${x.steps.length}: „${strip(t(x.steps[i]))}“` : `I'm at step ${i + 1} of ${x.steps.length}: “${strip(t(x.steps[i]))}”`)
+    : (de ? "Die Schritte der App sind erledigt; es bleiben meine eigenen Punkte." : "The app's steps are done; my own items are left.");
+  const blk = st.block[x.id] ? (de ? `\nBisher blockiert: ${blockText(st.block[x.id])}` : `\nBlocked so far: ${blockText(st.block[x.id])}`) : "";
+  return de
+? `Du bist Philia, meine geduldige Sicherheits-Trainerin aus dem Spiel Cyber-Quest. Hilf mir bei genau einer Aufgabe, Schritt für Schritt.
+
+Aufgabe: ${t(x.title)}
+Warum: ${t(x.why)}
+${stuck ? "Ich hänge fest. " : ""}${where}${blk}
+
+Vorschlag der App (Stand ${t(CHECKED)} – Menüs ändern sich, bitte prüfen):
+${steps}${own ? `\nMeine eigenen Punkte:\n${own}` : ""}
+
+Meine Geräte:
+${devLines()}
+Sprache meiner Menüs: ${menuLangName()}
+
+Regeln:
+- Prüf zuerst, ob diese Schritte für mein genaues Gerät und die aktuelle Version noch stimmen. Wenn du im Web suchen kannst, nimm die offizielle Hilfeseite des Herstellers und nenne sie. Wenn nicht, sag das und frag, was ich sehe.
+- Frag zuerst nach Modell und Version. Immer nur ein Schritt; warte auf mein „erledigt“.
+- Nenne Knöpfe und Menüs in der Sprache meiner Menüs.
+- Wenn es hilft, bitte mich um einen Screenshot oder die Ausgabe eines Befehls und sag mir vorher, was ich schwärzen soll.
+- Frag NIE nach Passwörtern, PINs, Codes, Wiederherstellungsschlüsseln oder Kartennummern; halt mich auf, wenn ich so etwas tippe. Empfiehl nie Fernwartungs-Software und nie, einer App die Bedienungshilfen-Berechtigung zu geben.
+- Geht etwas heute nicht, hilf mir, einen kurzen Blocker und ein Datum für die App zu formulieren.
+Antworte auf Deutsch, kurz und ermutigend.`
+: `You are Philia, my patient security coach from the game Cyber Quest. Help me with exactly one task, step by step.
+
+Task: ${t(x.title)}
+Why: ${t(x.why)}
+${stuck ? "I'm stuck. " : ""}${where}${blk}
+
+The app's suggestion (written ${t(CHECKED)} – menus change, please check):
+${steps}${own ? `\nMy own items:\n${own}` : ""}
+
+My devices:
+${devLines()}
+Language of my menus: ${menuLangName()}
+
+Rules:
+- First check these steps are still right for my exact device and current version. If you can search the web, use the maker's official help page and name it. If you can't, say so and ask me what I see.
+- Ask for model and version first. One step at a time; wait for my "done".
+- Name buttons and menus in the language of my menus.
+- If it helps, ask me for a screenshot or a command's output, and tell me what to black out first.
+- NEVER ask for passwords, PINs, codes, recovery keys or card numbers; stop me if I start typing one. Never suggest remote-access software, and never granting an app the Accessibility permission.
+- If something can't be done today, help me write a short blocker and a date for the app.
+Answer in English, short and encouraging.`;
+}
+const stuckPrompt = (x, i) => questPrompt(x, i, true);
+const AILINKS = `<p class="links"><a href="https://chatgpt.com" target="_blank" rel="noopener">ChatGPT</a><a href="https://claude.ai" target="_blank" rel="noopener">Claude</a><a href="https://gemini.google.com" target="_blank" rel="noopener">Gemini</a><a href="https://chat.mistral.ai" target="_blank" rel="noopener">Mistral</a><a href="https://chat.deepseek.com" target="_blank" rel="noopener">DeepSeek</a></p>`;
 function logText() {
   const s = state(), de = st.lang === "de";
   let o = `${t(T.title)} – ${st.bot} · ${s.xp} XP · ${t(s.rank)}\n${s.doneN} / ${s.total} ${t(T.doneOf)}\n`;
@@ -1047,7 +1296,9 @@ function renderForm() {
     if (q.sec !== sec) { sec = q.sec; h += `<div class="sec-title">${esc(t(SEC[sec]))}</div>`; }
     const hint = q.hint ? `<p class="hint" id="h-${q.id}">${esc(t(q.hint))}</p>` : "";
     h += `<fieldset${q.hint ? ` aria-describedby="h-${q.id}"` : ""}><legend>${esc(t(q.q))}</legend>${hint}` +
-      q.opts.map(([v, lab]) => `<label class="opt"><input type="radio" name="${q.id}" value="${v}" ${st.ans[q.id] === v ? "checked" : ""}> ${esc(t(lab))}</label>`).join("") +
+      (q.type === "multi"
+        ? `<p class="hint">${esc(t(T.tickAll))}</p>` + q.opts.map(([v, lab, only]) => `<label class="opt"><input type="checkbox" name="${q.id}" value="${v}"${only ? ' data-only1="1"' : ""} ${arr(st.ans[q.id]).includes(v) ? "checked" : ""}> ${esc(t(lab))}</label>`).join("")
+        : q.opts.map(([v, lab]) => `<label class="opt"><input type="radio" name="${q.id}" value="${v}" ${st.ans[q.id] === v ? "checked" : ""}> ${esc(t(lab))}</label>`).join("")) +
       `</fieldset>`;
   }
   h += `<p class="hint">${esc(t(T.missing))}</p><button class="btn primary" type="submit">${esc(t(T.go))}</button>`;
@@ -1078,11 +1329,17 @@ async function sendChat() {
 
 /* ---------- events ---------- */
 form.addEventListener("change", e => {
-  if (e.target.type !== "radio") return;
-  st.ans[e.target.name] = e.target.value; save();
+  const tg = e.target, nm = tg.name;
+  if (tg.type === "radio") st.ans[nm] = tg.value;
+  else if (tg.type === "checkbox") {
+    if (tg.checked && tg.dataset.only1) form.querySelectorAll(`input[name="${nm}"]`).forEach(b => { if (b !== tg) b.checked = false; });
+    if (tg.checked && !tg.dataset.only1) form.querySelectorAll(`input[name="${nm}"][data-only1]`).forEach(b => b.checked = false);
+    st.ans[nm] = [...form.querySelectorAll(`input[name="${nm}"]:checked`)].map(b => b.value);
+  } else return;
+  save();
   const y = window.scrollY;
   renderForm(); window.scrollTo(0, y);
-  const el = form.querySelector(`input[name="${e.target.name}"][value="${e.target.value}"]`); if (el) el.focus({ preventScroll: true });
+  const el = form.querySelector(`input[name="${nm}"][value="${tg.value}"]`); if (el) el.focus({ preventScroll: true });
   if (st.shown) renderGame(false);
 });
 form.addEventListener("submit", e => { e.preventDefault(); st.tab = "quests"; st.editing = false; form.hidden = true; intro.hidden = true; renderGame(); });
@@ -1095,6 +1352,30 @@ planEl.addEventListener("click", e => {
     const hh = $("bk-" + d.bk); if (hh) { hh.scrollIntoView({ block: "start" }); hh.focus({ preventScroll: true }); }
     return;
   }
+  if (d.recheck || d.cup) { st.tab = "log"; flash = flash.checkup && d.cup ? {} : { checkup: 1 }; save(); renderGame(false); const c = $("cupTxt") || $("upkeep"); c.scrollIntoView({ block: "center" }); c.focus({ preventScroll: true }); return; }
+  if (d.checkdone) { st.nextCheck = plusDays(today(), 90); save(); renderGame(false); return; }
+  if (d.ics) { const dt = $("ncDate").value || plusDays(today(), 90); st.nextCheck = dt; save();
+    const u = URL.createObjectURL(new Blob([icsFile(dt)], { type: "text/calendar" })), a = document.createElement("a");
+    a.href = u; a.download = "cyber-quest-check-up.ics"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); return; }
+  if (d.mvlink) { copyText(location.href.split("#")[0] + "#load=" + encodeURIComponent(exportCode()), b); return; }
+  if (d.mvcode) { copyText(exportCode(), b); return; }
+  if (d.mvload) { const ok = importCode($("mvIn").value); $("mvMsg").textContent = t(ok ? T.mvOk : T.mvBad); if (ok) setTimeout(() => { render(); }, 500); return; }
+  if (d.print) { st.tab = "quests"; flash = {}; save(); renderGame(false); setTimeout(() => window.print(), 50); return; }
+  if (d.ai) { const id = d.ai; keepOpen(() => { flash = flash[id] === "ai" ? {} : { [id]: "ai" }; }, flash[id] === "ai" ? `[data-ai="${id}"]` : `#ap-${id}`); return; }
+  if (d.nai) { openCard(d.nai, "ai", `#ap-${d.nai}`); return; }
+  if (d.open) { openCard(d.open); return; }
+  if (d.nblk) { openCard(d.nblk, "blk", `input[name="br-${d.nblk}"]`); return; }
+  if (d.onemore) { moreOk = true; renderGame(false); const n = planEl.querySelector(".next h2"); if (n) { n.tabIndex = -1; n.focus(); } return; }
+  if (d.ntick || d.ntickx) {
+    const [id, k] = (d.ntick || d.ntickx).split(":"), x = plan(st.ans).find(q => q.id === id);
+    if (d.ntick) (st.tick[id] = st.tick[id] || {})[k] = true; else st.extra[id][+k].d = true;
+    flash = {}; const p = prog(x); if (p.d === p.n) finish(id); save();
+    renderGame(false);
+    if (st.done[id]) openCard(id, "foiled"); else { const n = planEl.querySelector(".next h2"); if (n) { n.tabIndex = -1; n.focus({ preventScroll: true }); } }
+    return;
+  }
+  if (d.aihere) { const x = plan(st.ans).find(q => q.id === d.aihere), tk = st.tick[x.id] || {}; st.tab = "log"; chat = []; flash = {}; save(); renderGame(false);
+    $("chatIn").value = questPrompt(x, x.steps.findIndex((_, k) => !tk[k]), false); $("chatIn").scrollIntoView({ block: "center" }); $("chatSend").focus({ preventScroll: true }); return; }
   if (d.fail) { keepOpen(() => { flash = { [d.fail]: "fail" }; }, `[data-fail="${d.fail}"]`); return; }
   if (d.stuck) { keepOpen(() => { flash = { [d.stuck]: "stuck" }; }, `#sp-${d.stuck}`); return; }
   if (d.undo) {
@@ -1138,6 +1419,7 @@ function addOwn(id) {
 }
 planEl.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.dataset.axin) { e.preventDefault(); addOwn(e.target.dataset.axin); } });
 planEl.addEventListener("change", e => {
+  if (e.target.id === "ncDate") { if (e.target.value) { st.nextCheck = e.target.value; save(); } return; }
   const v = e.target.dataset.tick, vx = e.target.dataset.tickx;
   if (!v && !vx) return;
   const [id, k] = (v || vx).split(":"), on = e.target.checked;
