@@ -229,8 +229,8 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 /* ---------- texts ---------- */
 const T = {
   title: L("Cyber check", "Cyber-Check"),
-  tagline: L("Safe in cyberspace, now that AI can attack. About 20 questions, then your personal plan. Your answers stay on this phone.",
-             "Sicher im Netz, jetzt wo KI angreifen kann. Etwa 20 Fragen, dann dein persönlicher Plan. Deine Antworten bleiben auf diesem Gerät."),
+  tagline: L("Safe in cyberspace, now that AI can attack. About 25 questions, then your personal plan. Your answers stay on this phone.",
+             "Sicher im Netz, jetzt wo KI angreifen kann. Etwa 25 Fragen, dann dein persönlicher Plan. Deine Antworten bleiben auf diesem Gerät."),
   sos: L("🆘 I think I've been hacked", "🆘 Ich glaube, ich wurde gehackt"),
   introH: L("Why now", "Warum jetzt"),
   intro: [
@@ -326,6 +326,12 @@ const Q = [
     opts: [["all", L("On all important ones", "Bei allen wichtigen")], ["some", L("On some", "Bei manchen")], ["none", L("None / don't know", "Keinem / weiß nicht")]] },
   { id: "leaks", sec: "acc", q: L("Have you checked whether your email address is in data leaks?", "Hast du geprüft, ob deine E-Mail-Adresse in Datenlecks auftaucht?"),
     opts: [["fixed", L("Yes, and I changed the affected passwords", "Ja, und betroffene Passwörter geändert")], ["open", L("Yes, but not everything fixed", "Ja, aber noch nicht alles behoben")], ["never", L("Never checked", "Nie geprüft")]] },
+  { id: "jewels", sec: "acc", q: L("Your crown jewels (main email, bank, password manager): if your password manager or phone were gone tomorrow, could you still get in?", "Deine Kronjuwelen (Haupt-E-Mail, Bank, Passwort-Manager): Wären Passwort-Manager oder Handy morgen weg, kämst du noch hinein?"),
+    hint: L("You can't protect everything equally. Pick what matters most and harden it twice.", "Du kannst nicht alles gleich gut schützen. Das Wichtigste auswählen und doppelt absichern."),
+    opts: [["yes", L("Yes: I know their passphrases, and the codes are on paper", "Ja: Ich kenne die Passphrasen, die Codes liegen auf Papier")], ["part", L("Partly", "Teilweise")], ["no", L("No / never thought about it", "Nein / nie darüber nachgedacht")]] },
+  { id: "oldacc", sec: "acc", q: L("Old accounts you no longer use (shops, forums, apps, old email addresses):", "Alte Konten, die du nicht mehr nutzt (Shops, Foren, Apps, alte E-Mail-Adressen):"),
+    hint: L("Every forgotten account is a door with your name on it. Fewer doors, fewer break-ins.", "Jedes vergessene Konto ist eine Tür mit deinem Namen dran. Weniger Türen, weniger Einbrüche."),
+    opts: [["clean", L("Cleaned up, I delete what I don't need", "Aufgeräumt, ich lösche, was ich nicht brauche")], ["some", L("There are probably a few", "Da gibt es bestimmt ein paar")], ["many", L("Lots, never looked", "Viele, nie nachgesehen")]] },
   { id: "recovery", sec: "acc", q: L("Do you have recovery codes for your main accounts stored offline (paper, safe place)?", "Hast du Wiederherstellungscodes deiner Hauptkonten offline (Papier, sicherer Ort)?"),
     opts: [["yes", L("Yes", "Ja")], ["no", L("No / don't know", "Nein / weiß nicht")]] },
 
@@ -339,6 +345,10 @@ const Q = [
   { id: "backup", sec: "data", q: L("Backups of photos and important files:", "Backups von Fotos und wichtigen Dateien:"),
     hint: L("Ransomware also encrypts what is synced. An unplugged copy survives.", "Erpressersoftware verschlüsselt auch Synchronisiertes. Eine abgesteckte Kopie überlebt."),
     opts: [["good", L("Automatic, plus a copy that is offline/elsewhere", "Automatisch, plus eine Kopie offline/woanders")], ["cloud", L("Only cloud sync (iCloud, Google, OneDrive …)", "Nur Cloud-Sync (iCloud, Google, OneDrive …)")], ["manual", L("Sometimes, by hand", "Ab und zu, von Hand")], ["none", L("None", "Keine")]] },
+
+  { id: "paper", sec: "data", q: L("If your bank's app, email or the internet were down for a week: do you have what you need on paper?", "Wären Bank-App, E-Mail oder Internet eine Woche lang weg: Hast du das Nötige auf Papier?"),
+    hint: L("Rushed security updates are now breaking systems too. Outages are becoming normal.", "Hastige Sicherheitsupdates legen inzwischen selbst Systeme lahm. Ausfälle werden normal."),
+    opts: [["yes", L("Yes: recent bank statement, copies of ID, key numbers", "Ja: aktueller Kontoauszug, Ausweiskopien, wichtige Nummern")], ["part", L("Some of it", "Einiges davon")], ["no", L("No, everything is on the phone", "Nein, alles ist auf dem Handy")]] },
 
   { id: "code", sec: "ppl", q: L("Does your family have a code word for emergency calls?", "Hat deine Familie ein Codewort für Notfall-Anrufe?"),
     hint: L("AI can clone a voice from a few seconds of video. A voice proves nothing any more.", "KI klont eine Stimme aus wenigen Sekunden Video. Eine Stimme beweist nichts mehr."),
@@ -489,6 +499,20 @@ function plan(a) {
      L("For each leaked service: change that password, and everywhere you used the same one.", "Für jeden betroffenen Dienst: Passwort ändern – und überall, wo dasselbe benutzt wurde."),
      L("Expect targeted phishing that mentions the leaked company. Treat such mails as suspect.", "Mit gezieltem Phishing rechnen, das die betroffene Firma erwähnt. Solche Mails als verdächtig behandeln."),
      L("Sign up for free alerts on haveibeenpwned.com.", "Bei haveibeenpwned.com kostenlose Benachrichtigungen einrichten.")]);
+  add("jewels", a.jewels === "yes" ? "g" : a.jewels === "no" ? "r" : "a", "acc", L("Name your crown jewels and harden them twice", "Deine Kronjuwelen benennen und doppelt sichern"),
+    L("Security reporter Nicole Perlroth: identify what is most precious to you and harden it as much as possible.", "Sicherheitsjournalistin Nicole Perlroth: Finde heraus, was dir am wertvollsten ist, und sichere es so gut es geht."),
+    [L("Write down your 3 crown jewels. Usually: main email, bank (or PayPal), password manager.", "Deine 3 Kronjuwelen aufschreiben. Meist: Haupt-E-Mail, Bank (oder PayPal), Passwort-Manager."),
+     L("Give each a passphrase you can remember: 4–5 random words, e.g. “cactus lantern rowing velvet”. Unique, never used anywhere else.", "Jedem eine Passphrase geben, die du dir merken kannst: 4–5 zufällige Wörter, z. B. „Kaktus Laterne Rudern Samt“. Einzigartig, nirgends sonst benutzt."),
+     L("Turn on a passkey or authenticator app for all three. No SMS codes where you can avoid them.", "Für alle drei Passkey oder Authenticator-App einschalten. SMS-Codes vermeiden, wo es geht."),
+     L("Keep them in the password manager too, but also know them by heart. Then a broken manager or a lost phone doesn't lock you out.", "Auch im Passwort-Manager speichern, aber zusätzlich auswendig können. Dann sperrt dich ein kaputter Manager oder ein verlorenes Handy nicht aus."),
+     L("Put their recovery codes in the paper envelope (see “Recovery codes on paper”).", "Ihre Wiederherstellungscodes in den Papier-Umschlag legen (siehe „Wiederherstellungscodes auf Papier“).")]);
+  add("oldacc", a.oldacc === "clean" ? "g" : a.oldacc === "many" ? "r" : "a", "acc", L("Close the doors you don't use", "Türen schließen, die du nicht nutzt"),
+    L("An account you forgot still has your data, maybe a card, and often an old password. AI makes trying those cheap.", "Ein vergessenes Konto hat noch deine Daten, vielleicht eine Karte und oft ein altes Passwort. KI macht das Durchprobieren billig."),
+    [L("Go through your password manager list. For every entry, ask: do I still need this?", "Die Liste im Passwort-Manager durchgehen. Bei jedem Eintrag fragen: Brauche ich das noch?"),
+     L("Search your inbox for “welcome”, “confirm your email”, “Willkommen”: that finds accounts the manager doesn't know about.", "Im Postfach nach „welcome“, „confirm your email“, „Willkommen“ suchen: So findest du Konten, die der Manager nicht kennt."),
+     L("To delete: search “<site> delete account”. Remove saved cards first. No delete button? Email support from the account's address and ask for deletion of the account and your data (GDPR Art. 17).", "Zum Löschen: „<Seite> Konto löschen“ suchen. Gespeicherte Karten vorher entfernen. Kein Löschknopf? Von der Konto-Adresse aus dem Support schreiben und Löschung von Konto und Daten verlangen (DSGVO Art. 17)."),
+     L("Old email address you want to give up? First move every account still using it to your main address, and wait for open confirmations. Then close it last.", "Alte E-Mail-Adresse aufgeben? Erst alle Konten, die sie noch nutzen, auf die Hauptadresse umziehen und offene Bestätigungen abwarten. Dann sie zuletzt schließen."),
+     L("Five accounts per session is plenty. Delete the manager entry only after the site confirms.", "Fünf Konten pro Sitzung reichen. Den Manager-Eintrag erst löschen, wenn die Seite bestätigt.")]);
   add("recovery", a.recovery === "yes" ? "g" : "a", "acc", L("Recovery codes on paper", "Wiederherstellungscodes auf Papier"),
     L("Lose the phone and you may lose every account. Paper codes get you back in.", "Handy weg – und womöglich alle Konten. Papiercodes bringen dich zurück."),
     [L("Email, Apple/Google/Microsoft, password manager: Security settings → “Backup codes” / “Recovery key” / “Emergency kit”.", "E-Mail, Apple/Google/Microsoft, Passwort-Manager: Sicherheitseinstellungen → „Back-up-Codes“ / „Wiederherstellungsschlüssel“ / „Notfall-Kit“."),
@@ -533,6 +557,14 @@ function plan(a) {
      }[pc])) : [L("Copy photos and documents to an external drive.", "Fotos und Dokumente auf eine externe Platte kopieren.")]),
      L("Unplug the external drive after each backup. Keep a second one at family or work, swap monthly.", "Externe Platte nach jedem Backup abstecken. Eine zweite bei Familie oder Arbeit lagern, monatlich tauschen."),
      L("Once a year: try to restore one file. A backup you never tested is a hope, not a backup.", "Einmal im Jahr: eine Datei testweise zurückholen. Ein ungetestetes Backup ist eine Hoffnung, kein Backup.")]);
+
+  add("paper", a.paper === "yes" ? "g" : a.paper === "no" ? "r" : "a", "data", L("Paper for when systems go down", "Papier für den Fall, dass Systeme ausfallen"),
+    L("AI finds old bugs fast, and the rush to patch them is itself causing outages. Expect more of them.", "KI findet alte Fehler schnell, und das hastige Flicken verursacht selbst Ausfälle. Mit mehr davon rechnen."),
+    [L("Every few months: download your bank statements as PDF and print the latest one, or at least keep the PDF offline (USB stick).", "Alle paar Monate: Kontoauszüge als PDF laden und den neuesten ausdrucken, oder das PDF zumindest offline aufbewahren (USB-Stick)."),
+     L("Copies of passport/ID card, driving licence, health insurance card, car papers: one paper set in a folder you can grab, one as encrypted files on a USB stick.", "Kopien von Reisepass/Personalausweis, Führerschein, Krankenkassenkarte, Fahrzeugpapieren: ein Papiersatz in einer Mappe zum Greifen, einer verschlüsselt auf einem USB-Stick."),
+     L("A paper list of important numbers: family, doctor, bank's card-blocking line (in Germany 116 116), insurance, landlord.", "Eine Papierliste wichtiger Nummern: Familie, Arzt, Sperr-Notruf der Bank (in Deutschland 116 116), Versicherung, Vermieter."),
+     L("Some cash at home for a few days.", "Etwas Bargeld zu Hause für ein paar Tage."),
+     L("Longer outages (power, water, heating): the sister app Standby walks you through them.", "Längere Ausfälle (Strom, Wasser, Heizung): Die Schwester-App Standby führt dich da durch.")]);
 
   /* people */
   const elderly = a.house === "old" || a.house === "both", kids = a.house === "kids" || a.house === "both";
@@ -593,8 +625,8 @@ if (RM) { const hv = document.getElementById("heroVid"); if (hv) { hv.removeAttr
 
 Object.assign(T, {
   title: L("Cyber Quest", "Cyber-Quest"),
-  tagline: L("Two friends, one game. Ying, an ethical hacker, will try to sneak into your digital home. Philia defends it, with you. Answer about 20 questions, then close every door before Ying finds it. Everything stays on this phone.",
-             "Zwei Freundinnen, ein Spiel. Ying, eine ethische Hackerin, versucht in dein digitales Zuhause zu schleichen. Philia verteidigt es, mit dir. Etwa 20 Fragen beantworten, dann jede Tür schließen, bevor Ying sie findet. Alles bleibt auf diesem Gerät."),
+  tagline: L("Two friends, one game. Ying, an ethical hacker, will try to sneak into your digital home. Philia defends it, with you. Answer about 25 questions, then close every door before Ying finds it. Everything stays on this phone.",
+             "Zwei Freundinnen, ein Spiel. Ying, eine ethische Hackerin, versucht in dein digitales Zuhause zu schleichen. Philia verteidigt es, mit dir. Etwa 25 Fragen beantworten, dann jede Tür schließen, bevor Ying sie findet. Alles bleibt auf diesem Gerät."),
   go: L("Start the quest", "Quest starten"),
   tabQ: L("🛡️ Doors", "🛡️ Türen"), tabT: L("🎭 Spot the trick", "🎭 Trick erkennen"), tabL: L("📜 Log & AI help", "📜 Logbuch & KI-Hilfe"),
   botLabel: L("Philia's guard robot — give it a name", "Philias Wachroboter – gib ihm einen Namen"),
